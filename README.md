@@ -1,4 +1,3 @@
-# Study-Guide
 
 -   General:
     -   To do:
@@ -178,13 +177,13 @@
             -   "The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
             -   Given two integers x and y, calculate the Hamming distance."
             -   def hammingDistance(self, x, y):
-                -   #Result has 1 only in places where corresponding bits are different.
+                -   Result has 1 only in places where corresponding bits are different.
                 -   z = x ^ y
                 -   ct = 0
-                -   #Count the number of 1s.
+                -   Count the number of 1s.
                 -   while z:
                     -   ct += 1
-                    -   #Unsets the rightmost 1.
+                    -   Unsets the rightmost 1.
                     -   z &= z - 1
                 -   return ct
 -   Arrays Dictionaries and Strings:
@@ -247,7 +246,7 @@
                             -   has_cycle = True
                             -   break
                     -   if not has_cycle: return None
-                    -   #the point where they meet again, resetting slow to head, is the cycle start
+                    -   the point where they meet again, resetting slow to head, is the cycle start
                     -   while head != fast:
                         -   head = head.next
                         -   fast = fast.next
@@ -259,19 +258,19 @@
         -   Sort linked list using O(1) space and O(n log n) time:  
             [https://leetcode.com/problems/sort-list/description/](https://leetcode.com/problems/sort-list/description/)
             -   def sortList(self, head):
-                -   #base case
+                -   base case
                 -   if not head or not head.next: return head
-                -   #get middle (if even, get 1st middle)
+                -   get middle (if even, get 1st middle)
                 -   slow = fast = head
                 -   while fast.next and fast.next.next:
                     -   slow = slow.next
                     -   fast = fast.next.next
-                -   #split list in two and sort halves
+                -   split list in two and sort halves
                 -   h2 = slow.next
                 -   slow.next = None
                 -   left = self.sortList(head)
                 -   right = self.sortList(h2)
-                -   #then merge sorted halves
+                -   then merge sorted halves
                 -   return self.merge_sorted_lists(left, right)
             -   def merge_sorted_lists(self, h1, h2):
                 -   if None in (h1, h2): return h1 or h2
@@ -439,13 +438,13 @@
                     -   if char not in node:
                         -   node[char] = {}
                     -   node = node[char]
-                -   #mark end of word
+                -   mark end of word
                 -   node[''] = 1
             -   node = root
             -   prefix = ''
-            -   #if there's more than 1 key, then divergence / not common ancestor
+            -   if there's more than 1 key, then divergence / not common ancestor
             -   while len(node.keys()) == 1:
-                -   #if reached the end of any word, the LCA can't be longer
+                -   if reached the end of any word, the LCA can't be longer
                 -   if '' in node: return prefix
                 -   char = list(node.keys())[0]
                 -   prefix += char
@@ -515,8 +514,8 @@
                     -   But then the problem is I could have two edges between the same nodes but with different weights. *Could* be desirable though.
                 -   Code:  
                     From [https://leetcode.com/problems/evaluate-division/description/](https://leetcode.com/problems/evaluate-division/description/)
-                    -   #initialize graph where each node is mapped to a set of its neighbors
-                    -   #and each node 2-tuple is mapped to its result
+                    -   initialize graph where each node is mapped to a set of its neighbors
+                    -   and each node 2-tuple is mapped to its result
                     -   G, W = defaultdict(set), defaultdict(float)
                     -   for (a, b), val in zip(equations, values):
                     -   G[a], G[b] = G[a].union({b}), G[b].union({a})
@@ -804,9 +803,9 @@
                 -   [https://leetcode.com/problems/decode-ways/description/](https://leetcode.com/problems/decode-ways/description/)
                     -   code:
                         -   def numDecodings(self, s):
-                            -   #dp[i] =
-                            -   #dp[i-1] if dp[i] != 0
-                            -   #+ dp[i-2] if 9 < dp[i-2:i] < 27
+                            -   dp[i] =
+                            -   dp[i-1] if dp[i] != 0
+                            -   + dp[i-2] if 9 < dp[i-2:i] < 27
                             -   if not s or s[0] == '0': return 0
                             -   pre = cur = 1
                             -   for i, c in enumerate(s[1:]):
@@ -816,7 +815,7 @@
                                     -   pre = cur - pre
                                 -   else: pre = cur
                             -   return cur
-            
+
     -   Knuth-Morris-Pratt:
         -   the key is that if we have a prefix == suffix match in the substring up to the pattern[i] where pattern[i] stopped matching with text[j], then the suffix suf must also be the last characters we saw in text, text[ j-len(suf) : j ]; and since this substring suf is equal to some prefix pre, we can slide the pattern over, match up pre with text[ j-len(suf) : j ], and start trying to match again at pattern[ len(p) ] and text[j]
         -   [https://www.wikiwand.com/en/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm](https://www.wikiwand.com/en/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
@@ -848,7 +847,7 @@
                 -   def union(self, k1, k2):
                     -   k1, k2 = self.find(k1), self.find(k2)
                     -   if k1 == k2: return
-                    -   # ensure k1 is smaller component
+                    -   ensure k1 is smaller component
                     -   if self.rank[k1] > self.rank[k2]:
                         -   k1, k2 = k2, k1
                     -   self.parent[k1] = k2
@@ -887,11 +886,11 @@
                         -   self.next = None
                 -   class LRUCache(object):
                     -   def __init__(self, capacity):
-                        -   # dict mapping key to LLNode
+                        -   dict mapping key to LLNode
                         -   self.cache = {}
-                        -   # dummy nodes to simplify
-                        -   # head -next-> node <-prev- tail
-                        -   # remove from head, add to tail
+                        -   dummy nodes to simplify
+                        -   head -next-> node <-prev- tail
+                        -   remove from head, add to tail
                         -   self.head = LLNode()
                         -   self.tail = LLNode()
                         -   self.head.next = self.tail
@@ -925,7 +924,7 @@
                         -   node.prev = p
                         -   node.next = self.tail
                         -   self.tail.prev = node
-        -   harder version is LFUCache where least frequently used item is evicted (so need to keep track of frequency / # of accesses) *and* ties are broken by least recent too  
+        -   harder version is LFUCache where least frequently used item is evicted (so need to keep track of frequency / #of accesses) *and* ties are broken by least recent too  
             [https://leetcode.com/problems/lfu-cache/description/](https://leetcode.com/problems/lfu-cache/description/)
             -   use two dicts, one of which is an OrderedDict
             -   from collections import defaultdict, OrderedDict
@@ -936,7 +935,7 @@
             -   class LFUCache(object):
                 -   def __init__(self, capacity):
                     -   self.remain = capacity
-                    -   # need OrderedDict to break freq ties w LRU
+                    -   need OrderedDict to break freq ties w LRU
                     -   self.freq2node = defaultdict(OrderedDict)
                     -   self.least_freq = 1
                     -   self.key2node = defaultdict(LFUNode)
@@ -961,7 +960,7 @@
                     -   self.key2node[key] = LFUNode(value)
                     -   self.freq2node[1][key] = LFUNode(value)
                     -   if not self.remain:
-                        -   # pop FIFO
+                        -   pop FIFO
                         -   evicted = self.freq2node[self.least_freq].popitem(last=False)
                         -   self.key2node.pop(evicted[0])
                     -   else: self.remain -= 1
@@ -983,7 +982,7 @@
     -   Boyer-Moore majority vote algorithm:
         -   O(n) time and O(1) space algo for finding majority element if it exists
         -   used in LC #277 Find the Celebrity [https://leetcode.com/problems/find-the-celebrity/description/](https://leetcode.com/problems/find-the-celebrity/description/)
-            
+
         -   [https://www.wikiwand.com/en/Boyer%E2%80%93Moore_majority_vote_algorithm](https://www.wikiwand.com/en/Boyer%E2%80%93Moore_majority_vote_algorithm)
         -   Also in [https://leetcode.com/problems/majority-element/description/](https://leetcode.com/problems/majority-element/description/)
         -   Basically have a candidate majority element and a count, increment the count if curr == candidate, if count is 0 then curr is new candidate, else decrement count.
@@ -1012,11 +1011,11 @@
         -   def countPrimes(self, n):
             -   if n < 2: return 0
             -   arr = [1] * n
-            -   # from 2 to ceil(sqrt of n)
+            -   from 2 to ceil(sqrt of n)
             -   for i in xrange(2, int(n ** 0.5) + 1):
-                -   # if prime
+                -   if prime
                 -   if arr[i]:
-                    -   # increment by i starting at i squared
+                    -   increment by i starting at i squared
                     -   for j in xrange(i ** 2, n, i):
                         -   arr[j] = 0
             -   count = sum([1 for x in arr if x])
@@ -1025,17 +1024,17 @@
         [https://docs.python.org/2/library/heapq.html](https://docs.python.org/2/library/heapq.html)
         -   Heaps can be _very_ useful if I need to maintain some kind of min/max value, but it needs to be dynamically updated over time among other possible _previous_ values. Notably of course, the invariant just applies to the start/min of the list; the rest of the list remains unsorted.
         -   Basically just initialize heap as a normal list (or use in-place heapify) and then use heaq.heappush(arr, x), heappop, and heapreplace to push, pop, and replace an item while maintaining min-heap invariant.
-        -   Meeting room variant where getting fewest # of rooms needed:  
+        -   Meeting room variant where getting fewest #of rooms needed:  
             [https://leetcode.com/problems/meeting-rooms-ii/description/](https://leetcode.com/problems/meeting-rooms-ii/description/)
             -   intervals.sort(key=lambda x: x.start)
-            -   # keep track of min end time
+            -   keep track of min end time
             -   heap = []
             -   for n in intervals:
-                -   # heap[0] is always the min end time
-                -   # this means we can reuse this room but just need to update end
+                -   heap[0] is always the min end time
+                -   this means we can reuse this room but just need to update end
                 -   if heap and n.start >= heap[0]:
                     -   heapreplace(heap, n.end)
-                -   # otherwise we need to allocate a new room
+                -   otherwise we need to allocate a new room
                 -   else:
                     -   heappush(heap, n.end)
             -   return len(heap)
@@ -1045,12 +1044,12 @@
             -   h = [(n.val, n) for n in lists if n]
             -   heapify(h)
             -   while h:
-                -   # don't pop yet, only change heap size if nec
+                -   don't pop yet, only change heap size if nec
                 -   val, n = h[0]
                 -   if not n.next:
                     -   heappop(h)
                 -   else:
-                    -   # insert new val, n tuple while keeping invar
+                    -   insert new val, n tuple while keeping invar
                     -   heapreplace(h, (n.next.val, n.next))
                 -   curr.next = n
                 -   curr = curr.next
@@ -1072,14 +1071,14 @@
                         -   stk = [(i, j, 0, False)]
                         -   while stk:
                             -   x, y, word_i, backtrack = stk.pop()
-                            -   # prune branch
+                            -   prune branch
                             -   if backtrack:
                                 -   visited.remove((x, y))
                                 -   continue
                             -   if board[x][y] != word[word_i]: continue
                             -   if word_i + 1 == len(word): return True
                             -   visited.add((x, y))
-                            -   # add backtracking node before forward nodes
+                            -   add backtracking node before forward nodes
                             -   stk.append((x, y, word_i, True))
                             -   cands = []
                             -   for a, b in [(-1,0), (0,-1), (0,1), (1,0)]:
@@ -1094,60 +1093,60 @@
             -   [http://www.thecodenote.com/2017/05/beginners-guide-to-solving-n-queens.html](http://www.thecodenote.com/2017/05/beginners-guide-to-solving-n-queens.html)
             -   code:
                 -   def isSafe(board, row, col):
-                    -   # Check this row on left side
+                    -   Check this row on left side
                     -   for i in range(col):
                         -   if board[row][i] == 1:
                             -   return False
-                    -   # Check upper diagonal on left side
+                    -   Check upper diagonal on left side
                     -   for i,j in zip(range(row,-1,-1), range(col,-1,-1)):
                         -   if board[i][j] == 1:
                             -   return False
-                    -   # Check lower diagonal on left side
+                    -   Check lower diagonal on left side
                     -   for i,j in zip(range(row,N,1), range(col,-1,-1)):
                         -   if board[i][j] == 1:
                             -   return False
                     -   return True
                 -   def solveNQUtil(board, col):
-                    -   # base case: If all queens are placed
-                    -   # then return true
+                    -   base case: If all queens are placed
+                    -   then return true
                     -   if col >= N:
                         -   return True
-                    -   # Consider this column and try placing
-                    -   # this queen in all rows one by one
+                    -   Consider this column and try placing
+                    -   this queen in all rows one by one
                     -   for i in range(N):
                         -   if isSafe(board, i, col):
-                            -   # Place this queen in board[i][col]
+                            -   Place this queen in board[i][col]
                             -   board[i][col] = 1
-                            -   # recur to place rest of the queens
+                            -   recur to place rest of the queens
                             -   if solveNQUtil(board, col+1) == True:
                                 -   return True
-                        -   # If placing queen in board[i][col
-                        -   # doesn't lead to a solution, then
-                        -   # queen from board[i][col]
+                        -   If placing queen in board[i][col
+                        -   doesn't lead to a solution, then
+                        -   queen from board[i][col]
                         -   board[i][col] = 0
-                    -   # if the queen can not be placed in any row in
-                    -   # this column col then return false
+                    -   if the queen can not be placed in any row in
+                    -   this column col then return false
                     -   return False
         -   Android unlock patterns:
             -   [https://leetcode.com/submissions/detail/175474501/](https://leetcode.com/submissions/detail/175474501/)
             -   code:
                 -   def numberOfPatterns(self, m, n):
-                    -   # keep track of used keys and also can use math to figure out allowed jumps
+                    -   keep track of used keys and also can use math to figure out allowed jumps
                     -   flags = [False] * 10
-                    -   # for index i + 1, disallowed 1-step moves
+                    -   for index i + 1, disallowed 1-step moves
                     -   illegal = [(3, 7, 9), (8,), (1, 7, 9), (6,), (-1,), (4,), (1, 3, 9), (2,), (1, 3, 7)]
                     -   def dfs(prev, level):
-                        -   # base case
+                        -   base case
                         -   if level == 1: return 1
                         -   num_patterns, flags[prev] = 0, True
                         -   for i in xrange(1, 10):
-                            -   # if satisfy constraint, recur deeper
+                            -   if satisfy constraint, recur deeper
                             -   if not flags[i] and (i not in illegal[prev - 1] or flags[(i + prev) / 2]):
                                 -   num_patterns += dfs(i, level - 1)
-                            -   # otherwise continue / abandon branch (ie all solutions w this key as a successor)
+                            -   otherwise continue / abandon branch (ie all solutions w this key as a successor)
                         -   flags[prev] = False
                         -   return num_patterns
-                    -   # many keys are symmetric
+                    -   many keys are symmetric
                     -   return sum([dfs(1, i) * 4 + dfs(2, i) * 4 + dfs(5, i) for i in xrange(m, n + 1)])
     -   DFS in detail:
         -   Very common in island or flood fill-type problems. Make sure that I'm resetting the node or point to avoid infinite loops. I.e., once something passes the constraint, make sure I mark it in some way (could also just be a visited set or flags[i] boolean arr).
@@ -1155,16 +1154,16 @@
             -   code:
                 -   def floodFill(self, image, sr, sc, newColor):
                     -   def dfs(x, y, prev_color):
-                        -   # make sure we're within bounds
+                        -   make sure we're within bounds
                         -   if x < 0 or x >= len(image) or y < 0 or y >= len(image[0]):
                             -   return
                         -   curr_color = image[x][y]
-                        -   # make sure we don't loop indefinitely
+                        -   make sure we don't loop indefinitely
                         -   if image[x][y] != prev_color or image[x][y] == newColor:
                             -   return
-                        -   # fill ..
+                        -   fill ..
                         -   image[x][y] = newColor
-                        -   # .. recursively
+                        -   .. recursively
                         -   dfs(x - 1, y, prev_color)
                         -   dfs(x, y - 1, prev_color)
                         -   dfs(x, y + 1, prev_color)
@@ -1206,7 +1205,7 @@
         -   If it's a fully element sorted matrix (ie even more strictly sorted), can still do the same thing, but can also apply a binary search variant for O(log m + lg n) time. Basically binary search in a middle row, if not there, can know it's between last two elements and can eliminate the top left and bottom right "rectangles." [https://www.geeksforgeeks.org/search-element-sorted-matrix/](https://www.geeksforgeeks.org/search-element-sorted-matrix/)
         -   Can use similar intuition for kth smallest questions, including for k pairs with smallest sums where can transform array sums into matrix:
             -   [https://leetcode.com/problems/find-k-pairs-with-smallest-sums/description/](https://leetcode.com/problems/find-k-pairs-with-smallest-sums/description/) (reminder that heaps are great!)
-            
+
     -   Merge k sorted lists (k-way merge):  
         [https://www.wikiwand.com/en/K-way_merge_algorithm](https://www.wikiwand.com/en/K-way_merge_algorithm)
         -   Using a heap is kinda cheating, but can just use merge 2 linked lists function recursively
@@ -1260,9 +1259,9 @@
         -   [https://leetcode.com/problems/alien-dictionary/](https://leetcode.com/problems/alien-dictionary/)
         -   code:
             -   def alienOrder(self, words):
-                -   # a -> b
+                -   a -> b
                 -   adj = defaultdict(set)
-                -   # in-degree
+                -   in-degree
                 -   deg = {c: 0 for w in words for c in w}
                 -   for i, w1 in enumerate(words[:-1]):
                     -   w2 = words[i + 1]
@@ -1272,7 +1271,7 @@
                         -   adj[c1].add(c2)
                         -   break
                 -   res = ''
-                -   # start w 0 indegree nodes
+                -   start w 0 indegree nodes
                 -   q = deque([c for c in deg if not deg[c]])
                 -   while q:
                     -   c = q.popleft()
@@ -1298,12 +1297,12 @@
     -   Sliding window approach:
         -   example problem: [https://leetcode.com/problems/fruit-into-baskets/](https://leetcode.com/problems/fruit-into-baskets/) basically max subarray with 2 distinct elements)
             -   def totalFruit(self, tree):
-                -   # sliding window approach
+                -   sliding window approach
                 -   window = defaultdict(int)
                 -   max_len = j = 0
                 -   for i, fr in enumerate(tree):
                     -   window[fr] += 1
-                    -   # j will automatically stop before i
+                    -   j will automatically stop before i
                     -   while len(window) > 2:
                         -   prev = tree[j]
                         -   window[prev] -= 1
@@ -1319,7 +1318,7 @@
             -   n permute r = n! / (n-r)!
         -   combinations = order does not matter, _selections_ of elements
             -   n choose r = n! / (r! * (n-r)!)
-        
+
 -   Common or Noteworthy Problems / (Named) Algorithms
     -   Knuth-Morris-Pratt:
         -   class Solution(object):  
@@ -1331,21 +1330,21 @@
                 -   i = j = 0
                 -   while i < len(haystack) and j < len(needle):
                     -   if haystack[i] == needle[j]:
-                        -   # Matched, so return the haystack's match start index.
+                        -   Matched, so return the haystack's match start index.
                         -   if j == len(needle) - 1:
                             -   return i - len(needle) + 1
                         -   i, j = i + 1, j + 1
                     -   else:
-                        -   # Slide pattern over.
+                        -   Slide pattern over.
                         -   if j: j = next_arr[j-1]
                         -   else: i += 1
                 -   return -1
-            -   # Build next jump table.
+            -   Build next jump table.
             -   def create_next(self, pattern):
                 -   next_arr = [0] * len(pattern)
                 -   pre_i, suf_i = 0, 1
                 -   while suf_i < len(pattern):
-                    -   # Found prefix-suffix match.
+                    -   Found prefix-suffix match.
                     -   if pattern[pre_i] == pattern[suf_i]:
                         -   next_arr[suf_i] = pre_i + 1
                         -   pre_i, suf_i = pre_i + 1, suf_i + 1
@@ -1458,19 +1457,19 @@
             -   The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
         -   Code:
             -   Recursive:
-                -   # Definition for a binary tree node.
-                -   # class TreeNode:
-                -   # def __init__(self, x):
-                -   # self.val = x
-                -   # self.left = None
-                -   # self.right = None
+                -   Definition for a binary tree node.
+                -   class TreeNode:
+                -   def __init__(self, x):
+                -   self.val = x
+                -   self.left = None
+                -   self.right = None
                 -   class Solution:
-                    -   # @param {TreeNode} root
-                    -   # @return {integer}
+                    -   @param {TreeNode} root
+                    -   @return {integer}
                     -   def maxDepth(self, root):
-                        -   # Base case: no node.
+                        -   Base case: no node.
                         -   if not root: return 0
-                        -   # Recursive case: the maximum of the depths of the left and right sides plus the root depth (1).
+                        -   Recursive case: the maximum of the depths of the left and right sides plus the root depth (1).
                         -   return max(Solution.maxDepth(self, root.left), Solution.maxDepth(self, root.right)) + 1
             -   Iterative:
                 -   from collections import deque
@@ -1479,7 +1478,7 @@
                     -   :type root: TreeNode
                     -   :rtype: int
                     -   """
-                    -   # Iterative method: count number of levels.
+                    -   Iterative method: count number of levels.
                     -   if not root: return 0
                     -   q, depth = deque(), 0
                     -   q.append(root)
@@ -1563,14 +1562,14 @@
                     -   :type nums: List[int]
                     -   :rtype: int
                     -   """
-                    -   # 1, 1, 2, 3, 3
-                    -   # 1, 2, 2
-                    -   # 1, 1, 2, 2, 3
+                    -   1, 1, 2, 3, 3
+                    -   1, 2, 2
+                    -   1, 1, 2, 2, 3
                     -   nums.sort()
                     -   for i, n in enumerate(nums):
-                        -   # If odd number of elements and on last element, must be odd man out.
+                        -   If odd number of elements and on last element, must be odd man out.
                         -   if len(nums) % 2 != 0 and i == len(nums) - 1: return n
-                        -   # Compare every pair.
+                        -   Compare every pair.
                         -   if i % 2 != 0: continue
                         -   if n != nums[i+1]: return n
             -   XOR solutions (xor of the same numbers returns 0; xor of a nonzero number and zero returns the nonzero number):
@@ -1595,17 +1594,17 @@
                     -   """
                     -   prev = None
                     -   curr = head
-                    -   # Change one link at a time.
+                    -   Change one link at a time.
                     -   while(curr is not None):
-                        -   # Hold on to next node since will redirect link.
+                        -   Hold on to next node since will redirect link.
                         -   next = curr.next
-                        -   # Reverse link direction.
+                        -   Reverse link direction.
                         -   curr.next = prev
-                        -   # Update prev pointer.
+                        -   Update prev pointer.
                         -   prev = curr
-                        -   # Update curr pointer for next iteration.
+                        -   Update curr pointer for next iteration.
                         -   curr = next
-                    -   # Not curr since will be None.
+                    -   Not curr since will be None.
                     -   return prev
             -   Concise recursive:
                 -   def reverseList(self, head, prev=None):
@@ -1614,25 +1613,25 @@
                     -   :rtype: ListNode
                     -   """
                     -   if not head: return prev
-                    -   # Reverse links, making sure to hold on to the next node.
+                    -   Reverse links, making sure to hold on to the next node.
                     -   curr = head.next
                     -   head.next = prev
                     -   return self.reverseList(curr, head)
                 -   Worked out example:
-                    -   # 4 -> 1 -> 3 -> None
-                    -   # None <- 4 <- 1 <- 3
-                    -   # = 3 -> 1 -> 4 -> None
-                    -   #
-                    -   # curr = 1
-                    -   # head.next = 4.next = None -- None <- 4; curr = 1 -> 3 -> None
-                    -   # return reverseList(curr, head) = reverseList(1 -> 3 -> None, None <- 4)
-                    -   # curr = 3
-                    -   # head.next = 1.next = 4 -- None <- 4 <- 1; curr = 3 -> None
-                    -   # return reverseList(curr, head) = reverseList(3 -> None, None <- 4 <- 1)
-                    -   # curr = None
-                    -   # head.next = 3.next = 1 -- None <- 4 <- 1 <- 3; curr = None
-                    -   # return reverseList(None, None <- 4 <- 1 <- 3)
-                    -   # not head: return prev = None <- 4 <- 1 <- 3
+                    -   4 -> 1 -> 3 -> None
+                    -   None <- 4 <- 1 <- 3
+                    -   = 3 -> 1 -> 4 -> None
+                    -   
+                    -   curr = 1
+                    -   head.next = 4.next = None -- None <- 4; curr = 1 -> 3 -> None
+                    -   return reverseList(curr, head) = reverseList(1 -> 3 -> None, None <- 4)
+                    -   curr = 3
+                    -   head.next = 1.next = 4 -- None <- 4 <- 1; curr = 3 -> None
+                    -   return reverseList(curr, head) = reverseList(3 -> None, None <- 4 <- 1)
+                    -   curr = None
+                    -   head.next = 3.next = 1 -- None <- 4 <- 1 <- 3; curr = None
+                    -   return reverseList(None, None <- 4 <- 1 <- 3)
+                    -   not head: return prev = None <- 4 <- 1 <- 3
             -   Naive brute force iterative:
                 -   def reverseList(self, head):
                     -   """
@@ -1655,13 +1654,13 @@
         -   Code:
             -   def isValid(self, s):
                 -   map = {'(': ')', '{': '}', '[': ']'}
-                -   # Use a list as a stack.
+                -   Use a list as a stack.
                 -   stack = []
                 -   for i, c in enumerate(s):
                     -   if c in map:
                         -   stack.append(c)
                     -   elif c in map.values():
-                        -   # Also fails if stack is empty -> too many closing parens.
+                        -   Also fails if stack is empty -> too many closing parens.
                         -   if not stack or map[stack.pop()] != c: return False
                 -   return not stack
     -   Remove duplicates from unsorted singly linked list:  
@@ -1670,7 +1669,7 @@
             -   With buffer / auxiliary data structure:
                 -   from linkedlist import Node
                 -   def remove_dupes(head):
-                    -   # Edge case where single node list.
+                    -   Edge case where single node list.
                     -   if not head.next_node: return head
                     -   curr, prev = head, Node()
                     -   dupes = {}
@@ -1682,15 +1681,15 @@
                             -   prev = curr
                         -   curr = curr.next_node
             -   Without buffer:
-                -   # Now do it without another data structure.
+                -   Now do it without another data structure.
                 -   def remove_dupes2(head):
                     -   if not head.next_node: return head
                     -   curr, runner = head, head.next_node
-                    -   # Curr, not curr.next, because otherwise would miss last node.
+                    -   Curr, not curr.next, because otherwise would miss last node.
                     -   while curr:
                         -   runner = curr
                         -   while runner.next_node:
-                            -   # Compare using runner.next because no prev pointer.
+                            -   Compare using runner.next because no prev pointer.
                             -   if curr.data == runner.next_node.data:
                                 -   runner.next_node = runner.next_node.next_node
                             -   else:
@@ -1716,7 +1715,7 @@
                 -   for i, num in enumerate(nums):
                     -   diffs = [n[1] for n in nums_tups]
                     -   if num in diffs:
-                        -   # diffs and nums are in sync
+                        -   diffs and nums are in sync
                         -   return [diffs.index(num), i]
                     -   else:
                         -   nums_tups.append((num, target - num))
@@ -1747,7 +1746,7 @@
                 -   l1_num, l2_num = int(l1_str[::-1]), int(l2_str[::-1])
                 -   sum = l1_num + l2_num
                 -   sum_str_rev = str(sum)[::-1]
-                -   # Need a copy of root node to be able to return at the end since modifying while iterating.
+                -   Need a copy of root node to be able to return at the end since modifying while iterating.
                 -   root = ListNode(0)
                 -   curr = root
                 -   for c in sum_str_rev:
@@ -1780,20 +1779,20 @@
                 -   :type B: List[List[int]]
                 -   :rtype: List[List[int]]
                 -   """
-                -   # Matrix is a list of lists where each list is a row.
+                -   Matrix is a list of lists where each list is a row.
                 -   """
                 -   if not A or not B: return None
                 -   AB = [[0 for _ in B[0]] for _ in A]
-                -   # Iterate through rows of A.
+                -   Iterate through rows of A.
                 -   for i, row_a in enumerate(A):
-                    -   # 0, 1
-                    -   #Iterate through cols of A.
+                    -   0, 1
+                    -   Iterate through cols of A.
                     -   for j, ele_a in enumerate(row_a):
-                        -   # 0, 1, 2
+                        -   0, 1, 2
                         -   if ele_a:
-                            -   # Iterate through rows of B.
+                            -   Iterate through rows of B.
                             -   for k, ele_b in enumerate(B[j]):
-                                -   # 0, 1, 2
+                                -   0, 1, 2
                                 -   if ele_b:
                                     -   AB[i][k] += A[i][k] * B[k][j]
                 -   return AB
@@ -1810,16 +1809,16 @@
             -   convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
         -   Code:
             -   def convert(self, s, numRows):
-                -   # The key is that the distance down then up (or up then down) to get to the next letter on the current row is symmetric regardless of the horizontal distance traveled / the diagonal.
+                -   The key is that the distance down then up (or up then down) to get to the next letter on the current row is symmetric regardless of the horizontal distance traveled / the diagonal.
                 -   linenum = 1
                 -   ret_str = ''
                 -   ind = 0
-                -   # Have to alternate strategy for middle lines.
+                -   Have to alternate strategy for middle lines.
                 -   mid_cycle_index = 1
                 -   if numRows == 1: return s
                 -   for i in xrange(len(s)):
                     -   ret_str += s[ind]
-                    -   # First line.
+                    -   First line.
                     -   if linenum == 1:
                         -   ind += 2 * (numRows - 1)
                     -   elif linenum == numRows:
@@ -1830,10 +1829,10 @@
                         -   else:
                             -   ind += 2 * (linenum - 1)
                         -   mid_cycle_index += 1
-                    -   # Go to next line.
+                    -   Go to next line.
                     -   if ind >= len(s):
                         -   linenum += 1
-                        -   ind = linenum - 1 # ind is 0-based, linenum 1-based
+                        -   ind = linenum - 1 #ind is 0-based, linenum 1-based
                         -   mid_cycle_index = 1
                 -   return ret_str
     -   Meeting rooms:  
@@ -1844,11 +1843,11 @@
                 -   Given [[0, 30],[5, 10],[15, 20]],
                 -   return false.
         -   Code:
-            -   # Definition for an interval.
-            -   # class Interval(object):
-            -   # def __init__(self, s=0, e=0):
-            -   # self.start = s
-            -   # self.end = e
+            -   Definition for an interval.
+            -   class Interval(object):
+            -   def __init__(self, s=0, e=0):
+            -   self.start = s
+            -   self.end = e
             -   def canAttendMeetings(self, intervals):
                 -   """
                 -   :type intervals: List[Interval]
@@ -1857,7 +1856,7 @@
                 -   if not intervals or len(intervals) == 1: return True
                 -   intvl_st = sorted(intervals, key=lambda x: x.start)
                 -   for i, intvl in enumerate(intvl_st[1:]):
-                    -   # i, not i-1, since already skipped first one in intvl_st[1:].
+                    -   i, not i-1, since already skipped first one in intvl_st[1:].
                     -   prev = intvl_st[i]
                     -   if intvl.start < prev.end: return False
                 -   return True
@@ -2030,7 +2029,7 @@
             -   multi-class classification:
                 -   just use one-vs-all (aka one-vs-rest)
                 -   train a model for each class where the negative labels are all the other classes
-                
+
         -   regression:
             -   linear vs logistic: linear is continuous, logistic is categorical
             -   finding coefficients for standard linear equation: y = a + bx
@@ -2105,7 +2104,7 @@
         -   3 main approaches: pointwise, pairwise, and listwise
             -   [https://medium.com/@nikhilbd/pointwise-vs-pairwise-vs-listwise-learning-to-rank-80a8fe8fadfd](https://medium.com/@nikhilbd/pointwise-vs-pairwise-vs-listwise-learning-to-rank-80a8fe8fadfd)
             -   RankNet, LambdaRank and LambdaMART all transform ranking into a pairwise classification or regression problem. That means you look at pairs of items at a time, come up with the optimal ordering for that pair of items, and then use it to come up with the final ranking for all the results.
-            -   common loss function is minimizing # of inversions: cases where a pair's order should be inverted
+            -   common loss function is minimizing #of inversions: cases where a pair's order should be inverted
         -   Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality:
             -   [https://www.wikiwand.com/en/Discounted_cumulative_gain](https://www.wikiwand.com/en/Discounted_cumulative_gain)
             -   emphasizes highly relevant documents appearing earlier in list
