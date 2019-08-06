@@ -1,1 +1,2240 @@
 # Study-Guide
+
+-   General:
+    -   To do:
+        -   Repeat the problem out loud, slowly but confidently.
+        -   Ask questions, check assumptions, know what the _constraints_ are.
+        -   Talk out the problem!
+        -   Work out examples on the whiteboard, devising some kind of brute force algorithm along the way.  
+            _Don't stay silent here._
+        -   Start with **naive** simplest brute force solution.
+        -   Check edge cases and do null checks.
+        -   Work out examples using the code/algorithm; keep track of state by hand.
+        -   When debugging, _don't rush_. Don't guess and check—make sure I know exactly what went wrong and how to fix it. Preventatively: don't try to be too clever.
+        -   Know time/space complexity: [http://bigocheatsheet.com/](http://bigocheatsheet.com/)
+    -   Heuristics and guidelines:
+        -   Always consider hash tables (dictionaries) with their O(1)-ness.
+            -   "Tip: using a dictionary is the most common way to get from a brute force approach to something more clever. It should always be your first thought."
+            -   Sets are also extremely useful if all I care about is unique elements and membership testing.
+            -   Don't be afraid of using one even for graph traversals. Worry about optimizing space later.
+        -   If at all array-related, try sorting first.
+        -   If search-related, consider binary search.
+            -   "Binary search teaches us that when a list is sorted or mostly sorted:
+            -   The value at a given index tells us a lot about what's to the left and what's to the right.
+            -   We don't have to look at every item in the list. By inspecting the middle item, we can "rule out" half of the list.
+            -   We can use this approach over and over, cutting the problem in half until we have the answer. This is sometimes called "divide and conquer.""
+            -   For binary search, consider floor and ceiling as exclusive walls.
+        -   Start with a brute force solution, look for repeat work in that solution, and modify it to only do that work once.
+            -   "Instead, we started off by coming up with a slow (but correct) brute force solution and trying to improve from there. We looked at what our solution actually calculated, step by step, and found some repeat work. Our final answer came from brainstorming ways to avoid doing that repeat work."
+        -   Space-time trade-off! That is, for better time complexity, try using auxiliary data structures. E.g., do something in a single pass over an array—O(N) time—by using a hash table—O(N) space—vs. doing something in nested passes—O(N^2)—without using any extra space—O(1).
+            -   What information can I store to save time? Don't be scared of using tuples.
+            -   Counting sort (where the items are stored as keys/indices and the frequency is the value) is a big example here.
+            -   Another example: O(1) get_max method for a Stack class stores extra information (the max at and below each element) to save time (instead of iterating through the stack O(N)).
+        -   Remember that I can use two pointers:
+            -   E.g.: to get the midpoint in a linked list by having one pointer go twice as fast, or in a sum array problem by having the pointers work inward from either end, or to test if a string is a palindrome.
+            -   Also, the "stick" approach where to get the first node in a cycle, you start one pointer n nodes ahead of the other, where n is the length of the cycle.
+            -   Don't forget that I can also start at the center and expand outward, like in the palindromic substring problem: [https://leetcode.com/problems/longest-palindromic-substring/description/](https://leetcode.com/problems/longest-palindromic-substring/description/).
+        -   Try a greedy solution:
+            -   Iterate through the problem space taking the best solution "so far" (running sum etc.) until the end.
+            -   Optimal if the problem has "optimal substructure," which means stitching together optimal solutions to subproblems yields an optimal solution.
+            -   Also usually necessary for O(N) solutions.
+            -   "Suppose we could come up with the answer in one pass through the input, by simply updating the 'best answer so far' as we went. What additional values would we need to keep updated as we looked at each item in our input, in order to be able to update the 'best answer so far' in constant time?"
+        -   Does solving the problem for size (N – 1) make solving it for size N any easier? If so, try to solve recursively and/or with dynamic programming.
+        -   A lot of problems can be treated as graph problems and/or use breadth-first or depth-first traversal. And if the problem involves parsing or reversal in some way, consider using a stack.
+        -   Any time you repeatedly have to take the min or max of a dynamic collection, think heaps. (If you don’t need to insert random elements, prefer a sorted array.)
+            -   Python has a useful heapq class (min-heap with 0-based indexing).
+            -   Particularly useful if there are multiple such possible min/max values and some of them are in the "past" (precluding only having variables for the lowest 1-2 elements).
+        -   If you have a lot of strings, try putting them in a prefix tree / trie.
+        -   To improve time complexity, also consider how various complexities match to solution structures and try working backwards from a target runtime:
+            -   "If we're going to do better than O(N^2), we're probably going to do it in either O(N lg N) or O(N). O(N lg N) comes up in sorting and searching algorithms where we're recursively cutting the list in half. It's not obvious that we can save time by cutting the list in half here. Let's first see how well we can do by looping through the list only once."
+            -   Remember that time complexity is asymptotic, so don't worry about iterating through a list multiple times—it's still O(N).
+            -   "Starting with a target runtime and working backward from there can be a powerful strategy for all kinds of coding interview questions.":
+                -   We started with an O(N^2) brute force solution and wondered if we could do better.
+                -   We knew to beat O(N^2), we'd probably do O(N) or O(N lg N), so we started thinking of ways we might get an O(N lg N) runtime.
+                -   lg(N) usually comes from iteratively cutting stuff in half, so we arrived at the final algorithm by exploring that idea.
+        -   Try simplifying or otherwise restating what the question is asking for. Sometimes an explicit restatement (instead of relying on implicit assumptions about a plan of attack) makes things much easier.
+        -   Break up a problem into independent cases and draw out sample inputs for the cases.
+        -   Not quite the same as N-1, but sometimes a divide-and-conquer approach is what is necessary. If I know the answer for exclusive parts of the problem, can I somehow combine to get the final answer?
+        -   For puzzle problems or anything where we can enumerate all possible solutions and there's a notion of a partial candidate solution, consider backtracking.
+            -   "Backtracking is an important tool for solving constraint satisfaction problems, such as crosswords, verbal arithmetic, Sudoku, and many other puzzles. It is often the most convenient (if not the most efficient) technique for parsing, for the knapsack problem and other combinatorial optimization problems."
+            -   Backtracking is a powerful technique. It allows us to try all possible configurations/solutions, but in an optimal and incremental order, so that we can eliminate wholesale bad approaches. Basically we generate partial solutions at each iteration: if it passes the constraint check, we recur deeper (DFS style); if not, we continue / "prune" that entire branch and backtrack up the search tree to an unexplored branch. We generate new solutions through a loop breadth-wise and explore them further through DFS recurrence. The n queens problem is a typical example.
+            -   Just remember, we need a quick test to see if our candidate solution so far satisfies our constraints, and then we use _DFS_ to explore further.
+            -   Choose, explore, uncooked. The unchoose part is critical.
+        -   If it is anything to do with even/odd-ness, consider "canceling" even elements out. Don't need to track exact numbers.
+        -   Especially if a boolean function, think about how we can short-circuit and return early.
+            -   Also important for breaking out of loops early.
+        -   For backtracking (not "real" backtracking) or reconstructing going backward, think about what additional information we'd need.
+            -   "The tricky part was backtracking to assemble the path we used to reach our end_node. In general, it's helpful to think of backtracking as two steps:
+-   Bitwise Operations:
+    -   Integers are represented as a string of bits (binary digits). Either big endian (akin to most significant place value at left) or little endian (akin to most significant place value at right). So three-hundred twenty-one as 321 or 123.
+    -   If unsigned integer, the number of bits used (the width) determines the numbers that can be encoded: 2^n.  
+        Unsigned means that the number is always positive; negatives aren't supported.
+    -   If signed integer, 4 methods; most common is 2's complement where negating a number (whether positive or negative) is done by inverting all the bits and then adding 1.
+        -   This has the advantage of having only one representation of 0 (instead of negative 0 and positive 0).
+        -   With 2's complement: "a signed integral type with n bits [...] represent[s] numbers from −2^(n−1) through 2^(n−1) − 1." So with 8 bits, the numbers from -128 to 127 can be encoded.
+    -   Java supports the following 2's complement signed numerical primitives (does _not_ support unsigned numbers really):  
+        Also called integral data types.
+        -   byte -- 8 bits  
+            E.g.: from −128 to 127.
+        -   short -- 16 bits  
+            char -- _unsigned_ 16 bits
+        -   int -- 32 bits
+        -   long -- 64 bits
+    -   Python supports 4 primary numeric types:  
+        [https://docs.python.org/2/library/stdtypes.html](https://docs.python.org/2/library/stdtypes.html)
+        -   int -- Implemented using C's long, giving at least 32 bits of precision.
+        -   float -- Implemented using C's double, number of bits of precision depends on machine.
+        -   long -- Unlimited precision; expands to the limit of the available memory (not limited by number of bits).
+        -   complex -- Have a real and imaginary part, each of which is a float.
+        -   There are also fractions -- that hold rationals -- and decimal -- that hold floating-point numbers with user-definable precision.
+    -   Arithmetic:
+        -   Adding works as normal. Just remember that 1 + 1 = 10, so gotta carry the 1.
+        -   With subtraction, as normal but just be careful with borrowing from the left. If substracting 1 from 0 (0 - 1), borrow from the first place to the left where it's 1 - 0. If have to borrow multiple times, the leftmost digit (the one I'm really borrowing from) becomes a 0, the intervening digits get a decimal place added to them and then since they get borrowed from too a 1 is subtracted (so a 0 becomes 10 then 1 and a 1 becomes 11 then 10), and the original digit that needed to be increased becomes a 10.  
+            [http://sandbox.mc.edu/~bennet/cs110/pm/sub.html](http://sandbox.mc.edu/~bennet/cs110/pm/sub.html)
+        -   Multiplication can be done with left bitshifts. So because 3 * 5 is equivalent to 3 * (4 + 1), you can bitshift 3 to the left 2 places (which is 3 * 2^2 = 3 * 4) and then add 3 (3 * 1) back in.
+        -   Division can be done with right bitshifts, but just remember that it's integer division--rounded down basically.
+    -   Bitwise operations:
+        -   & = AND
+        -   ^ = XOR
+        -   | = (inclusive) OR
+        -   x << n = left-shifts x by n places (0s appended at the end). Equivalent to x * 2^n
+        -   x >> n = right-shifts x by n places using sign extension. Equivalent to x / 2^n (integer division).  
+            In Python, right-shift 0-fills.
+        -   x >>> n = right-shifts x by n places where 0s are shifted into the leftmost spots.  
+            Only in Java.
+        -   ~ = flips bits (unary operator)
+    -   Bit facts & tricks:  
+        Since operations are bitwise (occur bit by bit), these are all equivalent to their series-equivalents. E.g.: x ^ 0 is the same as x ^ 0s. If a statement is true for a single bit, it's true for a sequence of bits.
+        -   ^ (XOR)
+            -   x ^ 0 = x
+            -   x ^ 1 = ~x  
+                ~ = negation
+            -   x ^ x = 0
+        -   & (AND)
+            -   x & 0 = 0
+            -   x & 1 = x
+            -   x & x = x
+        -   | (inclusive OR)
+            -   x | 0 = x
+            -   x | 1 = 1
+            -   x | x = x
+        -   Swapping two values without a temporary variable:
+            -   a = a ^ b
+            -   b = a ^ b
+            -   a = a ^ b
+            -   E.g.: a = 2, b = 3; a = 0010, b = 0011.
+                -   a = a ^ b = 0010 ^ 0011 = 0001
+                -   b = a ^ b = 0001 ^ 0011 = 0010
+                -   a = a ^ b = 0001 ^ 0010 = 0011
+                -   a = 3, b = 2.
+    -   Common (and not-so-common) bit tasks:
+        -   Get the value of the bit at i in num. Specifically, return whether the _i_th bit is 1.
+            -   boolean getBit(int num, int i) {
+                -   return ((num & (1 << i)) != 0);
+                -   }
+            -   First left-shift 1 by i to get something like 00100000. Then AND with num to clear (set to 0) all the bits except the _i_th bit. If that value is not 0, then it's 1 and return true. Else it's 0 so return false.
+            -   To be more precise, the ANDing doesn't quite clear. It just makes it so that there are only two cases: all the bits are 0 or all the bits except the _i_th bit is 0. In the first case, the _i_th bit must be 0; in the second, it must be 1.
+        -   Set num's _i_th bit to 1.
+            -   int setBit(int num, int i) {
+                -   return num | (1 << i);
+                -   }
+            -   First left-shift 1 by i to again get something like 00100000. Then OR with num so that the _i_th bit will become 1 and the other values will not change. Recall that x OR-ing with 1 will always result in 1 and that x OR-ing with 0 will not change x.
+        -   Clear num's _i_th bit. Specifically, set the _i_th bit to 0.
+            -   int clearBit(int num, int i) {
+                -   int mask = ~(1 << i);
+                -   return num & mask;
+                -   }
+            -   Do something like the inverse of set (naturally). Left-shift 1 by i to again get something like 00100000. Then invert it so it looks like 11011111. AND with num: ANDing with 1 doesn't change anything, so the only bit that will change is the _i_th one, which will become a 0 if it isn't already.
+        -   Update num's _i_th bit with _v_. Specifically, set the _i_th bit to _v_.
+            -   int updateBit(int num, int i, int v) {
+                -   int mask = ~(1 << i);
+                -   return (num & mask) | (v << i);
+                -   }
+            -   The first part is equivalent to the clear bit method. Create a mask that looks like 11011111 then AND with num to clear the _i_th bit. Next, left-shift v by i bits so that v becomes a number where the _i_th bit is equal to what v was and all the other bits are 0. Finally, OR with the modified num (_i_th bit cleared) so that num's _i_th bit becomes 1 if v is 1 or is otherwise left as 0--recall that no other bits in num are modified since ORing with a 0 does not change the original.
+        -   Clear (unset) rightmost set bit. That is, change rightmost 1 to 0.
+            -   int clearRightmost(int num) {
+                -   return num & (num-1);
+                -   }
+            -   So, e.g., a 12 (1100) becomes a 1000 since ANDing 1100 and 1011 is 1000.
+            -   This forms the basis of the operation to determine parity.
+        -   Calculate parity. That is, return 1 (true) if the number of 1s is odd and 0 otherwise.  
+            EPI 5.1. #link [http://www.geeksforgeeks.org/write-a-c-program-to-find-the-parity-of-an-unsigned-integer/](http://www.geeksforgeeks.org/write-a-c-program-to-find-the-parity-of-an-unsigned-integer/) and [https://graphics.stanford.edu/~seander/bithacks.html#OperationCounting](https://graphics.stanford.edu/~seander/bithacks.html#OperationCounting)
+            -   Naive method:
+                -   boolean getParity(int num) {
+                    -   boolean parity = false;
+                    -   while (num) {
+                        -   parity = !parity;
+                        -   num = num & (num - 1);
+                        -   }
+                    -   return parity;
+                    -   }
+                -   Each time through the loop (until num is 0), clear the rightmost set bit and invert parity. Every odd number of clears, parity will be true / 1, so in the end, parity will be 1 if the number of 1s is odd and 0 otherwise.
+                -   Time complexity is the number of set bits.
+                -   We can also get the rightmost bit and xor with a 0/1 result. If 0, result doesn't change. Otherwise, result flips.
+            -   Not-so-naive method uses a precomputed lookup table. So for example the table could have the parities of the values from 0 through 15 inclusive. And then to find the parity of a 64 bit number, you would go 16 bits at a time by right shifting and XORing the 16 bit parities together.
+                -   This works because bitwise operations are associative (i.e., the grouping doesn't matter).
+        -   Get the Hamming distance.  
+            [https://leetcode.com/problems/hamming-distance/#/description](https://leetcode.com/problems/hamming-distance/#/description)
+            -   "The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
+            -   Given two integers x and y, calculate the Hamming distance."
+            -   def hammingDistance(self, x, y):
+                -   #Result has 1 only in places where corresponding bits are different.
+                -   z = x ^ y
+                -   ct = 0
+                -   #Count the number of 1s.
+                -   while z:
+                    -   ct += 1
+                    -   #Unsets the rightmost 1.
+                    -   z &= z - 1
+                -   return ct
+-   Arrays Dictionaries and Strings:
+    -   Hash tables are important! Note that insertion and find/lookup proceed through identical starting steps: hash the key and go to that table location. This enables the O(1) complexity for both.
+        -   Chaining is the common way to handle collisions. Just means each position is actually the head of a linked list.
+        -   Open addressing is the other method. Deletions are tricky with this.
+        -   Java has built-in hashcodes.
+    -   Python's dictionaries are implemented using hash tables. They are simply arrays whose indexes are obtained using a hash function on the keys.
+        -   Motivation:
+            -   "Think of a hash map as a "hack" on top of an array to let us use flexible keys instead of being stuck with sequential integer "indices."
+            -   All we need is a function to convert a key into an array index (an integer). That function is called a hashing function."
+        -   For the common case where I increment a key if it exists, but set it to 0 otherwise, use the get method:
+            -   my_dict[some_key] = my_dict.get(some_key, 0) + 1
+    -   Arrays offer easy random access but hard modification (have to move elements around).
+        -   In the worst case a larger array has to be reallocated too (but amortizes out).
+    -   In Java:
+        -   Use StringBuilder for expensive string concatenation. And for easy string reversal.
+        -   Everything is initialized to 0, including arrays.
+    -   Remember that chars are also ints.
+    -   Python only really has lists; arrays are just thin wrappers over C arrays.  
+        Always use lists unless have a _really_ good explicit reason to need C-style arrays.
+-   Linked Lists:
+    -   All a linked list _really is_ is the head node (which points to the next node, and so on).
+    -   To reverse a linked list, just need to remember to store next and update prev and curr pointers at each iteration:
+        -   nxt = curr.next
+        -   curr.next = prev
+        -   prev = curr
+        -   curr = nxt
+    -   To recursively reverse:
+        -   base case is null node or null node.next
+        -   remember to set head.next.next to head and then head.next = None
+    -   Deleting a node n is just setting the references to skip n: prev.next = n.next;
+        -   Can also delete a curr node even without a prev pointer: curr.data = curr.next.data; curr.next = curr.next.next;  
+            Basically, copy (and overwrite) next's data to curr and delete next.
+    -   Just make sure to check for the null pointer (!!) and be aware of the head pointer.
+    -   Linked lists offer easy modification but non-existent random access.
+    -   An important technique is the "runner" one:
+        -   Have two pointers iterating through the list, with one pointer either ahead by a fixed amount or actually moving faster.
+        -   For example, to determine the midpoint of a linked list, have two pointers such that one of them jumps 2 nodes at once and the other just 1. When the fast pointer hits the end, the slow one will be in the middle of the list.
+        -   To determine if a linked list has a cycle, do the same thing where 1 pointer moves ahead 2 nodes at a time. If there's a cycle, the runner will eventually equal the normal curr node. If not, will hit null node.
+            -   [https://www.wikiwand.com/en/Cycle_detection#/Tortoise_and_hare](https://www.wikiwand.com/en/Cycle_detection#/Tortoise_and_hare)
+                -   def hasCycle(self, head):
+                    -   slow = fast = head
+                    -   while fast and fast.next:
+                        -   slow = slow.next
+                        -   fast = fast.next.next
+                        -   if slow == fast: return True
+                    -   return False
+            -   then, once fast = slow, reset slow to head of list, and move forward both pointers 1 at a time. once they equal again, that's the start of the cycle. then move the fast pointer 1 at a time, once they equal for the 3rd time, that's the length of the cycle
+                -   can also use this to detect duplicates in an array given certain constraints
+                    -   [http://keithschwarz.com/interesting/code/?dir=find-duplicate](http://keithschwarz.com/interesting/code/?dir=find-duplicate)
+                    -   [https://leetcode.com/problems/find-the-duplicate-number/description/](https://leetcode.com/problems/find-the-duplicate-number/description/)
+                -   def detectCycle(self, head):
+                    -   slow = fast = head
+                    -   has_cycle = False
+                    -   while fast and fast.next:
+                        -   slow = slow.next
+                        -   fast = fast.next.next
+                        -   if slow == fast:
+                            -   has_cycle = True
+                            -   break
+                    -   if not has_cycle: return None
+                    -   #the point where they meet again, resetting slow to head, is the cycle start
+                    -   while head != fast:
+                        -   head = head.next
+                        -   fast = fast.next
+                    -   return head
+            -   or alternatively, if don't need the start index and just want cycle length, move fast 1 node at a time until hits slow again
+        -   A fixed amount (also called the stick approach) use case would be to determine the start of a cycle if you know the length of the cycle.
+    -   Recursion can often help.
+    -   Example problems and model code:
+        -   Sort linked list using O(1) space and O(n log n) time:  
+            [https://leetcode.com/problems/sort-list/description/](https://leetcode.com/problems/sort-list/description/)
+            -   def sortList(self, head):
+                -   #base case
+                -   if not head or not head.next: return head
+                -   #get middle (if even, get 1st middle)
+                -   slow = fast = head
+                -   while fast.next and fast.next.next:
+                    -   slow = slow.next
+                    -   fast = fast.next.next
+                -   #split list in two and sort halves
+                -   h2 = slow.next
+                -   slow.next = None
+                -   left = self.sortList(head)
+                -   right = self.sortList(h2)
+                -   #then merge sorted halves
+                -   return self.merge_sorted_lists(left, right)
+            -   def merge_sorted_lists(self, h1, h2):
+                -   if None in (h1, h2): return h1 or h2
+                -   if h1.val <= h2.val:
+                    -   h1.next = self.merge_sorted_lists(h1.next, h2)
+                    -   return h1
+                -   else:
+                    -   h2.next = self.merge_sorted_lists(h1, h2.next)
+                    -   return h2
+-   Stacks and Queues:
+    -   Stacks are last-in first-out (LIFO), like a stack of dinner plates or trays.
+    -   Queues are first-in first-out (FIFO), like a queue at an amusement park ride.
+    -   Both are easily implemented with a linked list.
+    -   With a stack, there's only one access point: the top (the linked list's head), and nodes point down / toward the tail.
+    -   With a queue, there are two: the first node (the head [of the line]) and the last (the tail). Nodes point back / toward the tail and are added to the tail (!).
+    -   Priority queues are neat structures (technically ADTs) where ordering is determined not by insertion time, but by some priority field:
+        -   Support insertion, find-min (or find-max), and delete-min (delete-max) operations.
+        -   The idea is that if I consistently just want the highest priority element, the priority queue will take care of that for me at insertion time, instead of my having to manually resort at extraction time.
+        -   Backing data structures include heaps (and balanced binary trees).
+        -   Generally implemented by keeping an extra pointer to the highest priority element, so on insertion, update iff new element is higher priority, and on deletion, delete then use find-min (or find-max) to restore the pointer.
+    -   Popping everything from a stack and pushing it all to another stack _reverses_ the ordering.  
+        Pushing everything back of course reverts the ordering.
+    -   Two stacks are Turing-complete.
+-   (Binary) Trees:
+    -   A tree is in part defined as a node (the root), which holds some value, together with references to other nodes (the children, themselves trees). Because this also defines a directed graph, these conditions are added:
+        -   at most 1 reference can point to any given node (i.e., a node has no more than 1 parent)
+        -   and no node in the tree points toward the root.
+    -   As such, a tree is really just a special case of a directed graph (digraph):
+        -   The graph definition: a connected (directed in this context, but undirected in, e.g., the context of a spanning tree) graph with no cycles.  
+            Formally, directed means that the tree is a rooted tree.
+    -   Binary trees (branching factor = 2) are recursively built from nodes that have pointers to a left and right child.
+    -   Binary trees aren't necessarily binary search trees (BSTs), which require that the left children are less than or equal to the current node which is less than all the right nodes.
+    -   Traversals:
+        -   Depth-first traversal (DFS) prefixes are in reference to when the root/current node is visited. So pre-order traversal means first root, then left children, then right; post-order means first left, then right, then root. In-order traversal will give a sorted list if it's a valid BST. Make sure to recurse fully when traversing.
+            -   DFS generally will hit leaves first/faster.
+            -   In-order traversal pseudocode is simple:
+                -   inorder(left)
+                -   visit(root)
+                -   inorder(right)
+            -   Same for the other traversals:
+                -   visit(root)
+                -   preorder(left)
+                -   preorder(right)
+        -   Only one kind of breadth-first traversal—the level order traversal. This traversal visits nodes by levels from top to bottom and from left to right. Uses a queue.
+        -   To choose between the two, we want to use DFS if we need to hit a leaf fast and BFS if we're more concerned with a "middle" level closer to the root. But if we need to print all leaf nodes, then by necessity they're the same.
+    -   Balanced trees are better. It also doesn't mean perfectly balanced.
+    -   Depth and height:
+        -   A node's depth = the number of _edges_ from the node to the tree's root node. A root node will have a depth of 0.
+        -   A node's height = the number of edges on the _longest_ path from the node to a leaf. A leaf (root?) node will have a height of 0.
+        -   The depth and height of a _tree_ are equal.
+    -   Full and complete is a tree where all leaves are at the bottom and each non-leaf node has exactly 2 children (sometimes called a perfect tree as in [http://www.cs.gettysburg.edu/~ilinkin/courses/Fall-2012/cs216/notes/bintree.pdf](http://www.cs.gettysburg.edu/~ilinkin/courses/Fall-2012/cs216/notes/bintree.pdf)).  
+        Rare because then must have exactly (2^n) - 1 nodes where n is the number of levels, or (2^ (h+1)) - 1 where h is the height.
+        -   Full = every node other than the leaves has 2 children. I.e., every node either has 0 or 2 children.
+        -   Complete = every level (except maybe the last) is _completely_ filled and all nodes are as far left as possible. I.e., the tree is as compact as possible.
+        -   In a perfect tree, h = O(log n) because h = log2 (n + 1) − 1 and we drop the less significant terms.
+    -   Algo tips:
+        -   For DFS, use a stack as always.
+        -   To validate BST, in-order traversal and comparing to sorted version is O(N lg N)*, but the better O(N) way is to recurse down the tree and set floor and ceiling conditions.
+            -   *Actually we can check if a list is sorted in O(N) time (we don't need to resort) so same thing.
+        -   For lowest common ancestor (LCA), the LCA is just the first node that is in between the keys I'm looking for. E.g., if a root node is greater than both key nodes, then I know the LCA has to be on the _left_ side of the tree.
+    -   In-order successor:
+        -   Important in a lot of binary tree operations.
+        -   The next node in an in-order traversal; i.e., the node with the smallest key that's still greater than the current node's key.
+        -   Pseudo-pseudocode:
+            -   If current node has a right child, go to it then as far left as possible. Must be smallest key in right subtree.
+            -   Otherwise, must travel up the tree (its left child / subtree is by definition smaller, i.e., can't be successor):
+                -   If current node is the left child of its parent, then the parent must be the successor.
+                -   Otherwise, keep going up until escape the right subtree and hit the middle. I.e., when the current node is a left child, its parent must be the in-order successor. We're looking for its ("upper-right") parent.
+    -   Heaps:
+        -   A natural implementation of the priority queue ADT (the other being a balanced binary tree).
+            -   The highest priority element (whether min or max) recursively sits at the top of the heap.
+            -   Works by maintaining a partial ordering, so less expensive than fully sorted, but more valuable than no ordering.
+        -   A _complete_ tree where the highest (or lowest) priority element is always stored at the root—hence a _heap_. A max heap is one where a node is always greater than or equal to its children; a min heap is one where a node is always lesser than or equal to its children.
+            -   Are used to implement priority queues—queues where the ordering is based on priority, not on position in queue—and to do heap sort.
+            -   There is no implied ordering within a level (that is, no ordering between siblings) and so a heap is not a sorted structure.
+        -   Insertion and deletion (need to respect the heap ordering property) are both O(log N) where N is the number of nodes.
+        -   (Binary) heaps are implemented in arrays.
+            -   Note that _any_ binary tree can be so implemented, but that it makes particular sense for heaps, because heaps are guaranteed to be complete trees and thus the array implementation will be compact.
+            -   If a non-complete tree is implemented in an array, then there will be empty slots because a node may have only 1 child and the tree may go on quite a bit deeper than that level.
+            -   Saves space because can use array position to implicitly maintain the ordering property, instead of storing pointers.
+        -   In the array implementation:
+            -   Let n be the number of elements in the heap and i be an arbitrary valid index of the array storing the heap. If the tree root is at index 0, with valid indices 0 through n − 1, then each element a at index i has:
+                -   children at indices 2i + 1 and 2i + 2
+                -   and its parent at floor((i − 1) ∕ 2).
+            -   Alternatively, if the tree root is at index 1, with valid indices 1 through n, then each element a at index i has:  
+                1-basing sacrifices a tiny amount of space to simplify index arithmetic.
+                -   children at indices 2i and 2i +1
+                -   and its parent at index floor(i ∕ 2).
+        -   Operations:
+            -   Both insert and remove — remove only removes the root since that's all we care about — are done to an end of the heap to maintain the compact shape. Then, to modify the ordering property, the heap is traversed (respectively, up-heap / sift-up and down-heap / sift-down). Both operations take O(log N) time.
+            -   Up-heap (or sift-up) is used, e.g., to restore the heap ordering when a new element is added to the end/bottom:
+                -   Compare the added element with its parent; if they are in the correct order, stop.
+                -   If not, swap the element with its parent and return to the previous step.
+            -   Down-heap (or sift-down) is used, e.g., to restore the heap ordering when the root is deleted/removed and replaced with the last element (on the last level):
+                -   Compare the new root with its children; if they are in the correct order, stop.
+                -   If not, swap the element with one of its children and return to the previous step (for the newly ordered subtree). (Swap with its smaller child in a min-heap and its larger child in a max-heap.)  
+                    So basically, swap with higher priority child.
+            -   Heapify, given a complete binary tree, turns the data structure into a heap:
+                -   We want the heap property to obtain, so we need to ensure that each parent node is greater (or lesser, if min heap) than its children.
+                -   Starting at the last parent node (take the last node and use index arithmetic to figure out the last parent), call down-heap on it. This will make the subtree rooted at this parent node a heap.
+                -   Continue on for all the other parent nodes.
+                -   Where the heap is 1-based implemented:  
+                    Mostly from visualgo.
+                    -   for (i = arr.length / 2; i >= 1; i--)
+                        -   DownHeap(arr[i])
+        -   Heapsort just entails copying elements to be sorted into an array, heapifying it, then taking the max (root) out each time and putting it at the end of the result array.
+            -   This can be done in-place (in the same array) where one section is for the heap and the other for the sorted list. Thus, each iteration of the algorithm will reduce the heap by 1 and increase the sorted list by 1.
+            -   Heapsort is similar to insertion sort in that each step of the algorithm takes the max element from the unsorted section and moves it to the sorted section.
+        -   Note that heaps are _not_ binary search trees, so we can't efficiently find a given key using binary search.
+            -   This is because the order property only works between parent and children, not between _siblings_.
+    -   Self-balancing binary trees:
+        -   Binary trees have performance proportional to their height, so keeping the height small maximizes performance. In the worst case, a tree approximates a linked list; a maximally unbalanced tree is just a linked list — where the height is 1 less than the number of nodes.
+            -   Specifically, a balanced tree has performance O(log n) (think binary search), but an unbalanced tree has performance O(n) (think linked list).
+        -   Self-balancing trees thus guarantee balanced-ness and consequently efficient performance.
+        -   Red-black trees:  
+            [http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_rbtree.aspx](http://www.eternallyconfuzzled.com/tuts/datastructures/jsw_tut_rbtree.aspx)
+            -   Guarantees searching, insertion, and deletion in O(log n).
+            -   Each node has a color, red or black, associated with it. How the tree is "painted" ensures balance. When modified, the tree is re-arranged and re-painted to keep the necessary color properties.
+            -   Originally an abstraction of symmetric binary B-trees, also called 2-3-4 or 2-4 trees. Red-black trees are really isomorphic to 2-4 trees; i.e., they are equivalent data structures.  
+                [https://www.cs.princeton.edu/~rs/AlgsDS07/09BalancedTrees.pdf](https://www.cs.princeton.edu/~rs/AlgsDS07/09BalancedTrees.pdf) [https://www.wikiwand.com/en/2%E2%80%933%E2%80%934_tree](https://www.wikiwand.com/en/2%E2%80%933%E2%80%934_tree)
+                -   In a 2-4 tree, there are 3 kinds of nodes:
+                    -   2-node: 1 key and (if internal etc.) 2 children
+                    -   3-node: 2 keys and 3 children
+                    -   4-node: 3 keys and 4 children
+                -   All leaves are at the same depth, the bottom level. So, every path from root to leaf is the same length ensuring _perfect_ balance.
+            -   Leaf nodes have no data.
+            -   Red-black trees have the following properties:  
+                [https://www.topcoder.com/community/data-science/data-science-tutorials/an-introduction-to-binary-search-and-red-black-trees/](https://www.topcoder.com/community/data-science/data-science-tutorials/an-introduction-to-binary-search-and-red-black-trees/)
+                -   1) every node is either red or black;
+                -   2) all leaves are black;  
+                    Leaves can either be explicit nodes with no data or just NIL nodes.
+                -   3) if a node is red, both its children are black; and
+                -   4) every path from a given node n to a descendant leaf has the same number of black nodes (not counting node n). We call this number the black height of n, which is denoted by bh(n).
+            -   These explicit properties give rise to this critical property: the path from the root to the farthest leaf is _no more than twice as long_ as the path from the root to the nearest leaf, ensuring that the tree is roughly height-balanced.
+            -   This limits the height of any red-black tree, ensuring that even in the worst case, search, insert, and deletion are still efficient.
+            -   The balance property is guaranteed through the combination of properties 3 and 4:
+                -   For a red–black tree T, let B be the number of black nodes in property 4 (since every path has the same number of black nodes). Let the shortest possible path from the root of T to any leaf consist of B black nodes. Longer possible paths may be constructed by inserting red nodes. However, property 3 makes it impossible to insert more than 1 consecutive red node. Therefore, ignoring any black NIL leaves, the longest possible path consists of 2*B nodes, alternating black and red (this is the worst case).
+                -   The _shortest possible path has all black nodes_, and the _longest possible path alternates between red and black nodes_. Since all maximal paths have the same number of black nodes, by property 4, this shows that no path is more than twice as long as any other path.
+            -   A red-black tree can be converted to a 2-4 tree by remembering that red nodes are part of ("horizontally" linked within) a logical 2-4 B-tree node and black nodes separate the logical 2-4 nodes with normal vertical links:
+                -   So to convert a red-black tree to a 2-4 form, just move the red nodes up so that they become horizontally linked with their parent black node to form a logical 2-4 node.
+                -   All leaf nodes will be at the same depth.
+                -   See [http://www.wikiwand.com/en/Red%E2%80%93black_tree](http://www.wikiwand.com/en/Red%E2%80%93black_tree) for an example.
+            -   Search and other read-only operations are the same as those used to BST. However, insertion and deletion are much more complex, because they may violate red-black properties and then must be fixed with color changes and rotations.  
+                These fixes are quite quick in practice. E.g., the color changes are amortized O(1).
+                -   A tree rotation is a binary tree operation that changes the structure _without_ affecting the order of the elements. That is, the in-order traversal is the same pre- and post-rotation.
+                -   [http://www.wikiwand.com/en/Tree_rotation](http://www.wikiwand.com/en/Tree_rotation)
+                -   Essentially, a right rotation (the root moves right) on a root node X has X become the right child of the new root, which will be X's former left child.
+                -   Order in the descendants is maintained through realizing that the right child of a left child of a root node can become the left child of the root without violating any binary tree constraints.
+            -   Insertion and deletion have a number of cases that must be handled.
+        -   AVL trees:  
+            [http://www.wikiwand.com/en/AVL_tree](http://www.wikiwand.com/en/AVL_tree)
+            -   More rigidly balanced than red-black trees, leading to slower insertion and removal, but faster search. So better for read-heavy use cases.
+            -   Critical property: the heights of the two child subtrees of any node differ by at most one; if at any time they differ by more than one, rebalancing (with tree rotations) is done to restore this property.
+            -   Retrieval, insertion, and deletion, as with red-black trees, are O(log n) in the worst case.
+    -   A trie (or radix tree or prefix tree) is a n-ary tree variant in which characters are stored at each node, such that each path down the tree may represent a word:
+        -   Unlike a binary search tree, no node in the tree stores the key associated with that node; instead, its position in the tree defines the key with which it is associated.
+        -   All the descendants of a node have a common prefix of the string associated with that node, and the root is associated with the empty string.
+        -   [https://www.wikiwand.com/en/Trie](https://www.wikiwand.com/en/Trie)
+        -   Note that tries do not have to be keyed by character strings; other ordered lists can work too, e.g., permutations on a list of digits.
+        -   Can just implement as a dictionary of (nested) dictionaries . Or of course using classes and OO. E.g. for dicts:
+            -   root = {}
+            -   for word in strs:
+                -   node = root
+                -   for char in word:
+                    -   if char not in node:
+                        -   node[char] = {}
+                    -   node = node[char]
+                -   #mark end of word
+                -   node[''] = 1
+            -   node = root
+            -   prefix = ''
+            -   #if there's more than 1 key, then divergence / not common ancestor
+            -   while len(node.keys()) == 1:
+                -   #if reached the end of any word, the LCA can't be longer
+                -   if '' in node: return prefix
+                -   char = list(node.keys())[0]
+                -   prefix += char
+                -   node = node[char]
+            -   return prefix
+    -   Links:
+        -   [http://www.wikiwand.com/en/Tree_(data_structure)](http://www.wikiwand.com/en/Tree_(data_structure))
+        -   this is a pretty good general reference: [http://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html](http://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/trees.html).
+-   Graphs:
+    -   The graph ADT comprises a set of vertices (or nodes) together with a set of pairs of vertices, the edges. A vertex can be any arbitrary abstract object.
+    -   Graphs are an extremely powerful concept. Linked lists, trees, state transition diagrams, etc. are all just cases of graphs.
+    -   Terminology:
+        -   Direction:
+            -   Directed graph (or digraph) = a graph where the edges have a direction associated with them. I.e., each edge is now an ordered pair of vertices.
+            -   In conceptual terms, direction implies that relations between vertices are not symmetric. For example, a graph of friends would be undirected, since X being friends with Y implies that Y is friends with X. And on the other hand, a graph of Twitter followers would be directed, since X being a follower of Y does _not_ imply that Y is a follower of X.
+            -   Directed acyclic graph (or DAG) = a digraph with no (directed) cycles.  
+                [https://www.wikiwand.com/en/Directed_acyclic_graph](https://www.wikiwand.com/en/Directed_acyclic_graph)
+                -   Many important applications, e.g., systems of events or partial events, scheduling, causal structures.
+                -   A rooted tree, as in the ADT, is a DAG.
+                -   Workflowy is essentially a directed acyclic graph!
+                -   Topological sort (or topological ordering):
+                    -   A topological sort of a digraph is just the linear ordering of its vertices such that for every directed edge _ab_, _a_ comes somewhere before _b_.
+                    -   Any DAG has at least one topological ordering.
+                    -   The canonical case is scheduling: the vertices of the graph may represent tasks to be performed, and the edges may represent constraints that one task must be performed before another (prerequisites). Thus, a topological ordering is just a valid sequence for the tasks.
+                    -   A reverse postorder traversal provides a topological ordering.
+        -   Multiple edges & loops:
+            -   Multiple (or parallel) edges = 2 or more edges that connect the same 2 vertices.
+            -   Loop = an edge that connects a vertex to itself.
+            -   Multigraph = a graph that can have multiple edges and (depending on the convention) sometimes loops.
+            -   Simple graph = a graph that cannot have multiple edges or loops.
+        -   Connectivity:
+            -   Connected graph = graph with no vertices by themselves; i.e., there is some path between every pair of vertices / every pair of the graph's vertices is connected.
+            -   A connected component is a maximal subgraph that is (1) connected and (2) not connected to any vertices in the rest of the supergraph.
+                -   Subgraph of a graph G = graph whose vertices are a subset of G's vertices and whose edges are a subset of G's edges. Note that this is subset, not proper subset.
+                -   Tracking the connected components of a changing graph is a straightforward partitioning problem, which can be naturally solved with the application of disjoint-set (or union-find) data structures.  
+                    [https://www.wikiwand.com/en/Disjoint-set_data_structure](https://www.wikiwand.com/en/Disjoint-set_data_structure)
+                -   Maximal such subgraph because otherwise there would be "overlapping" connected components. This constrains it such that each vertex and each edge belongs to exactly one connected component. Mathematically, connected components partition their supergraph.
+            -   A digraph is strongly connected if every pair of vertices (x and y) has a directed path both from x to y _and_ from y to x. Otherwise, it is merely (weakly) connected.
+                -   The strong components of a digraph are just the maximal strongly connected subgraphs.
+                -   Kosaraju's algorithm and Tarjan's strongly connected components algorithm are 2 popular ways to compute a digraph's strongly connected components.
+            -   A vertex cut (or separating set) = the set of vertices whose removal would make the graph disconnected.  
+                Note that this is _not_ the same as a cut.
+            -   Easy to compute connectivity: if the number of nodes visited through either BFS or DFS equals the number of vertices, then the graph is connected.
+        -   Weighted graphs have weights (or costs or distances) associated with their edges. So 2 paths can have the same number of edges (same path length), but have different total weights (or distances) because their edges' weights differ.
+        -   Cut:
+            -   A partition of a graph's vertices into two disjoint subsets.
+            -   Also defines a cut-set, the set of edges that have 1 endpoint in each subset of the partition. I.e., the edges that cross the cut (also called a crossing edge). Sometimes a cut is identified as its cut-set.
+            -   The size / weight of a cut is the (total) weight of the cut-set, the edges crossing the cut. If unweighted, the size is the number of such crossing edges.
+        -   Degree of a node is the number of edges connected to it. If directed graph, there is an indegree and an outdegree.
+        -   A Hamiltonian path is a path that visits each vertex exactly once. Similarly, a Hamiltonian cycle (or circuit) is a Hamiltonian path that is a cycle. Determining whether such a path exists in a graph is known as the NP-complete Hamiltonian path problem.
+        -   Coloring:
+            -   A graph coloring is just assigning colors to the nodes in a graph.
+            -   A _legal_ coloring is when no two adjacent / connected nodes have the same color.
+            -   Finding the fewest number of colors we can use for a legal coloring (the chromatic number) is an NP problem.
+    -   Three _primary_ implementation methods / data structures:  
+        [https://www.wikiwand.com/en/Graph_(abstract_data_type)](https://www.wikiwand.com/en/Graph_(abstract_data_type)) and [http://www.cs.rochester.edu/~nelson/courses/csc_173/graphs/implementation.html](http://www.cs.rochester.edu/~nelson/courses/csc_173/graphs/implementation.html)
+        -   Adjacency list:  
+            [https://www.wikiwand.com/en/Adjacency_list](https://www.wikiwand.com/en/Adjacency_list)
+            -   Each vertex is associated with an unordered list that contains its neighbors.
+            -   More efficient than the adjacency matrix in returning a given vertex's neighbors, O(1); less efficient in testing whether two vertices are neighbors, O(|V|), because in the worst case the whole list of neighbors has to be scanned.  
+                |V| is the number of vertices.
+            -   Slow in removing a vertex / edge, because must find all vertices / edges.
+            -   To represent weights, each node in the neighbor list could also contain the weight.
+            -   In practice the simplest way is this; in Python, just use defaultdicts:
+                -   Graph is a dict of nodes where each node is mapped to a set of its neighbors.
+                -   Weights is a dict where each origin and dest-node is a tuple that is mapped to the weight val. (Or could do it where the set of neighbors is a tuple of (neighbor, weight)).
+                    -   But then the problem is I could have two edges between the same nodes but with different weights. *Could* be desirable though.
+                -   Code:  
+                    From [https://leetcode.com/problems/evaluate-division/description/](https://leetcode.com/problems/evaluate-division/description/)
+                    -   #initialize graph where each node is mapped to a set of its neighbors
+                    -   #and each node 2-tuple is mapped to its result
+                    -   G, W = defaultdict(set), defaultdict(float)
+                    -   for (a, b), val in zip(equations, values):
+                    -   G[a], G[b] = G[a].union({b}), G[b].union({a})
+                    -   W[a, b], W[b, a] = val, 1.0 / val
+        -   Adjacency matrix:  
+            [https://www.wikiwand.com/en/Adjacency_matrix](https://www.wikiwand.com/en/Adjacency_matrix)
+            -   A matrix where each non-diagonal entry Aij is the number of edges from vertex i to vertex j, and the diagonal entry Aii, depending on the convention, is either once or twice the number of edges (loops) from vertex i to itself.  
+                Undirected graphs often use the latter convention of counting loops twice, whereas directed graphs typically use the former convention.
+            -   Sometimes the matrix value is just a boolean, if there can be no parallel edges (i.e., the graph is a simple graph, not a multigraph).
+            -   In a graph without loops, the diagonal in the matrix will have all zero entries.
+            -   Adjacency matrices are space-efficient, because each matrix entry only requires one bit. However, for a sparse graph (few edges), adjacency lists use less space because they do not represent nonexistent edges.
+            -   More efficient than the adjacency list in determining whether two vertices are neighbors, O(1); less efficient in getting all of a given vertex's neighbors because the entire row must be scanned, O(|V|).
+            -   Slow to add or remove vertices, because the matrix must be resized / copied.
+            -   To represent weights, the matrix value could be the weight of that edge.
+        -   The third (less common but very simple) implementation method is just objects and pointers:
+            -   Naturally, Nodes / Vertex[es] can be represented as objects, with pointers to neighbor nodes. If a list of those pointers is kept, it becomes very similar to an adjacency list ([http://stackoverflow.com/questions/5886274/comparing-object-graph-representation-to-adjacency-list-and-matrix-representatio](http://stackoverflow.com/questions/5886274/comparing-object-graph-representation-to-adjacency-list-and-matrix-representatio)).
+            -   Also, Edges are another natural object that can be used.
+    -   Graph traversals:  
+        [http://www.wikiwand.com/en/Graph_traversal](http://www.wikiwand.com/en/Graph_traversal) and for implementations in Python [http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/](http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/)
+        -   Depth-first search (DFS):
+            -   Depth-first search is like walking through a corn maze. You explore one path, hit a dead end, and go back and try a different one.
+            -   DFS visits the child nodes before visiting the sibling nodes; i.e., it traverses the depth of any particular path before exploring its breadth.
+            -   Pro: usually less memory than BFS and easily implemented with recursion.
+            -   Con: doesn't necessarily get shortest path.
+            -   Pseudo-pseudocode:
+                -   Visit node r and then iterate through each of r's unvisited neighbors.
+                -   When visiting a neighbor n, immediately visit all of _his_ neighbors. And so on.  
+                    Thus depth-first. So neighbor n and its children are exhaustively searched before r moves on to its other adjacent nodes.
+                -   If no neighbors, i.e., a dead end, backtrack (pop the stack) until reach unvisited node.
+            -   Python code:  
+                [http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/](http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/)
+                -   Adjacency list implementation:
+                    -   graph = {'A': set(['B', 'C']),
+                        -   'B': set(['A', 'D', 'E']),
+                        -   'C': set(['A', 'F']),
+                        -   'D': set(['B']),
+                        -   'E': set(['B', 'F']),
+                        -   'F': set(['C', 'E'])}
+                -   Iterative:
+                    -   def dfs(graph, start):
+                        -   visited, stack = set(), [start]
+                        -   while stack:
+                            -   vertex = stack.pop()
+                            -   if vertex not in visited:
+                                -   visited.add(vertex)
+                                -   stack.extend(graph[vertex] - visited)
+                        -   return visited
+                -   Recursive:
+                    -   def dfs(graph, start, visited=None):
+                        -   if visited is None:
+                            -   visited = set()
+                        -   visited.add(start)
+                        -   for next in graph[start] - visited:
+                            -   dfs(graph, next, visited)
+                        -   return visited
+            -   Easy to iteratively implement with a stack. Just make sure to "mark" visited nodes to prevent infinite loops.
+            -   Also easy to recursively implement (also via a stack, i.e., the program's call stack).
+        -   Breadth-first search (BFS):
+            -   Breadth-first search is like throwing a stone in the center of a pond. The nodes you explore "ripple out" from the starting point.
+            -   BFS explores the neighbor nodes first, before moving to the next "level."
+            -   Pro: will always find the shortest path.
+            -   Con: usually requires more memory than DFS.
+            -   Pseudo-pseudocode:
+                -   Visit node r and then iterate through each of r's unvisited neighbors.
+                -   When visiting a neighbor n, add its neighbors to queue, but _don't_ visit them yet.
+                -   Visit _all_ of node r's neighbors before visiting any of r's "(grand)children."
+            -   Python code:  
+                [http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/](http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/)
+                -   Adjacency list implementation:
+                    -   graph = {'A': set(['B', 'C']),
+                        -   'B': set(['A', 'D', 'E']),
+                        -   'C': set(['A', 'F']),
+                        -   'D': set(['B']),
+                        -   'E': set(['B', 'F']),
+                        -   'F': set(['C', 'E'])}
+                -   Iterative:
+                    -   def bfs(graph, start):
+                        -   visited, queue = set(), [start]
+                        -   while queue:
+                            -   vertex = queue.pop(0)
+                            -   if vertex not in visited:
+                                -   visited.add(vertex)
+                                -   queue.extend(graph[vertex] - visited)
+                        -   return visited
+            -   Implement iteratively with a queue and mark visited as always.
+        -   "Remember that breadth-first uses a queue and depth-first uses a stack (could be the call stack or an actual stack object). That's not just a clue about implementation, it also helps with figuring out the differences in behavior. Those differences come from whether we visit nodes in the order we see them (first in, first out) or we visit the last-seen node first (last in, first out)."
+        -   DFS is the easiest if want to visit every node.
+        -   But BFS can get shortest path(s) first.
+        -   Both traversals (for the entire graph) take time linear to the size of the graph (number of vertices + number of edges), O(|V| + |E|) and space linear to the number of vertices.
+            -   In other words: runtime is O(N + M) where M is the number of edges (we check each neighbor twice per edge).
+        -   Note that just as trees are a special case of graphs, tree traversals are a special case of graph traversals.
+    -   Two common graph problems:
+        -   Shortest-path tree (or single-source shortest paths (SSSP) problem):
+            -   A shortest-path tree rooted at vertex _v_ is a spanning tree T of the graph G such that the path distance from _v_ to any other vertex _u_ in the tree is the shortest path from _v_ to _u_ in G. I.e., the shortest-path tree rooted at _v_ is the tree that comprises the shortest paths from _v_ to every node.
+                -   A spanning tree of G is a tree (a connected undirected graph with no cycles) T such that (1) every vertex in G belongs to it and (2) every edge in T belongs to G.
+                -   Must be a spanning tree because otherwise it wouldn't actually be a tree of paths from the root node to _all_ nodes.
+            -   Simpler, related version is finding the shortest path from one node to another. But finding the shortest path from the former to _all_ nodes takes the same amount of time.
+            -   In an unweighted graph or a graph in which all edge weights are 1, the shortest-path tree is _isomorphic_ to the BFS tree.
+            -   Be careful to remember that edge lengths or distances are the same as edge weights. So if the graph is a weighted one, the path distance from vertex _a_ to _b_ is actually the sum of the edge weights of that path.
+                -   If the weights are 1 or nonexistent, then the path distance is just the number of edges from 1 node to another.
+            -   Algorithms:
+                -   Dijkstra's algorithm:  
+                    [https://www.wikiwand.com/en/Dijkstra's_algorithm](https://www.wikiwand.com/en/Dijkstra's_algorithm)
+                    -   Fastest shortest-path tree / single-source shortest paths algorithm for [di]graphs with nonnegative edge weights.
+                    -   Pseudo-pseudocode:  
+                        [http://www.egr.unlv.edu/~larmore/Courses/CSC269/pathing](http://www.egr.unlv.edu/~larmore/Courses/CSC269/pathing)
+                        -   The distance of node Y is the distance from the root node to Y. First assign some initial distance values and then seek to greedily improve them step by step.
+                        -   1) Assign to every node an initial tentative distance value: set it to 0 for our root node and to infinity (float('inf')) for all other nodes.
+                        -   2) Assign the root node as current. Create an unvisited node set and put all nodes in it.
+                        -   3) For the current node _c_, consider all of its unvisited neighbors (e.g., _d_) and calculate their tentative distances: tentativeDist(_d_) = tentativeDist(_c_) + _c_.getEdgeLength(_d_). Compare the newly calculated tentative distance to the current assigned value and assign the smaller one. For example, if the current node A is marked with a distance of 6, and the edge connecting it with a neighbor B has length 2, then the distance to B (through A) will be 6 + 2 = 8. If B was previously marked with a distance greater than 8 then change it to 8. Otherwise, keep the current value.
+                            -   This process is called relaxation; we are relaxing the edges by trying to find if the tentative distances of _c_'s neighbors could be improved by diverting the path through _c_.
+                        -   4) When we are done considering / updating all of the neighbors of the current node, mark the current node as visited and remove it from the unvisited set. A visited node will never be checked again and it is now in the shortest-path tree. Its tentative distance value is the final distance value. I.e., it is now the actual distance or cost of the shortest path from the source root node to the current just-visited node.
+                        -   5) The algorithm is done if the destination node has been marked visited (for the simple case where we are calculating shortest path between 2 nodes) or if the unvisited set is empty or if the smallest tentative distance among the nodes in the unvisited set is infinity (occurs when there is no connection between the initial node and remaining unvisited nodes).
+                        -   6) Select the unvisited node that is marked with the smallest tentative distance, and set it as the new current node, then go back to step 3.
+                    -   Implementation:
+                        -   "The simplest implementation of the Dijkstra's algorithm stores vertices of set Q in an ordinary linked list or array, and operation Extract-Min(Q) is simply a linear search through all vertices in Q. In this case, the running time is O(V^2).
+                        -   For sparse graphs, that is, graphs with much less than V^2 edges, Dijkstra's algorithm can be implemented more efficiently by storing the graph in the form of adjacency lists and using a binary heap or Fibonacci heap as a priority queue to implement the Extract-Min function. With a binary heap, the algorithm requires O((E+V)lgV) time, and the Fibonacci heap improves this to O(E + VlgV)."
+                        -   Pretty understandable Python implementation: [http://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python](http://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python)
+                            -   Specifically the prof answer with helper functions.
+                            -   More complicated but better: [https://gist.github.com/econchick/4666413](https://gist.github.com/econchick/4666413)
+                        -   Need to have a predecessor or previous-like reference for each node to actually build a tree. Otherwise, just returns each node and its distance from the root node. Or could build path as go through algorithm, as in the gist implementation above.
+                        -   Re: predecessors, getting a predecessor subgraph is a pretty nice way to form the actual (shortest-path) tree:
+                            -   The edges in such a subgraph are (preds[v],v), where preds is the array of predecessors for each vertex.
+                            -   In the algorithm, whenever relaxation happens, just add the correct predecessor. E.g., if vertex u's distance value can be improved by going through w, then preds[u] = w.
+                            -   Then can form shortest-path tree easily at the end.
+                            -   [https://www.cs.auckland.ac.nz/software/AlgAnim/dijkstra.html](https://www.cs.auckland.ac.nz/software/AlgAnim/dijkstra.html)
+                    -   With a min-priority queue to get the unvisited node with the smallest tentative distance, can run in O( |E| + |V| log |V| ).
+                    -   Not capable of handling negative weights (Bellman-Ford can, however).
+                    -   Known as a greedy algorithm because at each stage, it _greedily_ selects the unvisited minimum-weight node.
+                    -   Supposed to be for directed graphs.
+                    -   Dijkstra's is a special case of A*.
+                        -   A* (A star) is an extended version of Dijkstra's that uses heuristics to guide its search and be a best-first search.  
+                            [http://www.wikiwand.com/en/A*_search_algorithm](http://www.wikiwand.com/en/A*_search_algorithm)
+                        -   Dijkstra's is just A* where the heuristic / evaluation function for each node is null.
+                -   Bellman-Ford algorithm:  
+                    [http://www.wikiwand.com/en/Bellman%E2%80%93Ford_algorithm](http://www.wikiwand.com/en/Bellman%E2%80%93Ford_algorithm)
+                    -   Slower than Dijkstra's but _does_ handle negative edge weights. And can report the existence of negative cycles.  
+                        A negative cycle means that there is no shortest or cheapest path, because any presumably shortest path could be made shorter by going around the cycle again.
+                    -   Similar to Dijkstra's in that it depends on relaxation: each node's distance starts out as an overestimate and is iteratively improved through edge relaxation (diverting the old path through a new node to improve the distance).
+                    -   Different than Dijkstra's in that at each step the relaxation process is done on _all_ edges at once, instead of just on the outgoing edges from some current node. Thus, this relaxation is done |V|-1 times.
+                    -   Implementation:
+                        -   "Simply put, the algorithm initializes the distance to the source to 0 and all other nodes to infinity. Then for all edges, if the distance to the destination can be shortened by taking the edge, the distance is updated to the new lower value. At each iteration i that the edges are scanned, the algorithm finds all shortest paths of at most length i edges. Since the longest possible path without a cycle can be |V|-1 edges, the edges must be scanned |V|-1 times to ensure the shortest path has been found for all nodes. A final scan of all the edges is performed and if any distance is updated, then a path of length |V| edges has been found which can only occur if at least one negative cycle exists in the graph."
+        -   Minimum spanning tree (MST):  
+            [https://www.wikiwand.com/en/Minimum_spanning_tree](https://www.wikiwand.com/en/Minimum_spanning_tree) and [http://algs4.cs.princeton.edu/43mst/](http://algs4.cs.princeton.edu/43mst/)
+            -   A minimum spanning tree is a spanning tree (a subgraph that is a tree and that connects all the vertices) that has the lowest total weight.
+            -   Properties:
+                -   If all edge weights are the same, then every spanning tree is a MST.
+                -   On the contrary, if all edge weights are distinct, then there is 1 unique MST.
+                -   There are |V| - 1 edges in a spanning tree.
+                -   If unconnected graph, can still use MST algorithms to find the MST for each connected component, together forming a minimum spanning forest.
+                -   If weights are positive (don't have to be), then the MST is just the subgraph with minimal weight that connects all the vertices. I.e., don't have to say it's a tree (which has no cycles), since those subgraphs which have cycles are necessarily greater weight.
+            -   Algorithms:
+                -   Note that:
+                    -   Cuts are very important, specifically, the cut property (the basis of the algorithms): Given any cut in an edge-weighted graph (with distinct weights), the crossing edge of minimum weight is in the MST of the graph.  
+                        [http://algs4.cs.princeton.edu/43mst/](http://algs4.cs.princeton.edu/43mst/)
+                -   Simple greedy algorithm:
+                    -   The following method colors black all edges in the the MST of any connected edge-weighted graph with V vertices: Starting with all edges colored gray, find a cut with no black edges, color its minimum-weight edge black, and continue until V-1 edges have been colored black.  
+                        [http://algs4.cs.princeton.edu/43mst/](http://algs4.cs.princeton.edu/43mst/)
+                -   Prim's algorithm:
+                    -   Prim's algorithm works by attaching a new edge to a single growing tree at each step: Start with any vertex as a single-vertex tree; then add V-1 edges to it, always taking next (coloring black) the minimum-weight edge that connects a vertex on the tree to a vertex not yet on the tree (a crossing edge for the cut defined by tree vertices).
+                    -   This is a relatively simple method, but the crucial step is efficiently detecting the minimum-weight crossing edge to be added at each step:
+                        -   Lazy way:
+                            -   Just maintain a priority queue (PQ) of the crossing edges (priority is obviously by minimum weight). Each time a crossing edge is added to the MST, a vertex is also added. The new crossing edges to be added to the PQ are just the edges from the new vertex to all non-MST vertices. However, there might be old edges in the PQ which are now ineligible (i.e., they are non-crossing and now connect two MST vertices). This way is lazy since it leaves these edges in the PQ.
+                        -   Eager way:
+                            -   The first improvement is to delete ineligible edges from the PQ, such that only crossing edges from the growing MST to the rest of the graph are present. But we can do even better. Since (1) we are only concerned with the _minimal_ crossing edge and since (2) when we add a new edge / vertex _v_ to the MST, the only possible improvement for each non-tree vertex _w_ is that adding _v_ brings _w_ closer to the tree, we really just need to keep track of the minimum-weight edge and check whether the addition of _v_ to the tree necessitates that we update that minimum (because of an edge _v-w_ that has lower weight), which we can do as we process each edge. In other words, we maintain on the priority queue just one edge for each non-tree vertex: the shortest edge that connects it to the tree.
+    -   Linear time for a graph is O(N + M) where N is the number of nodes and M is the number of edges.
+        -   E.g., it's the runtime for BFS *and* DFS.
+    -   Edge cases in graph problems are nodes with no edges, cycles, and loops (single-node cycles).
+    -   DAGs and topological sorts are important concepts to know:
+        -   Topological sort is relatively easy to implement, just remember the definition (for vertices _u_, _v_ where _u_ has a directed edge to _v_, _u_ has to come before _v_ in the topological ordering) and use a stack.
+        -   Start at a given vertex, add to visited set, recursively (depth-first) visit and explore unvisited neighbors, when have fully explored _v_'s neighbors add _v_ to stack, and pop all at end for topologically sorted ordering.
+        -   Also think of it as a modification of DFS:
+            -   "We can modify DFS to find Topological Sorting of a graph. In DFS, we start from a vertex, we first print it and then recursively call DFS for its adjacent vertices. In topological sorting, we use a temporary stack. We don’t print the vertex _immediately_, we first recursively call topological sorting for all its adjacent vertices, then push it to a stack. Finally, print contents of stack. Note that a vertex is pushed to stack _only_ _when_ all of its adjacent vertices (and their adjacent vertices and so on) are already in stack."
+-   Sorting and Searching:
+    -   Binary search is indispensable and also surprisingly tricky to get right:
+        -   [https://leetcode.com/problems/search-insert-position/description/](https://leetcode.com/problems/search-insert-position/description/)
+        -   consider l and r to be _walls_ (i.e., exclusive not inclusive) around my target value
+        -   that way can just set l or r to be the guess/median value
+        -   also to get the median, do floor + (distance between divided by two)
+        -   def searchInsert(self, nums, target):
+            -   """
+            -   :type nums: List[int]
+            -   :type target: int
+            -   :rtype: int
+            -   """
+            -   l, r = -1, len(nums)
+            -   while l + 1 < r:
+                -   m = l + ((r - l) / 2)
+                -   curr = nums[m]
+                -   if target == curr:
+                    -   return m
+                -   elif target > curr:
+                    -   l = m
+                -   else:
+                    -   r = m
+            -   return l + 1
+        -   could also do:
+            -   while l <= r:
+                -   m = l + (r - l) / 2
+                -   curr = nums[n]
+                -   if target == curr:
+                    -   return m
+                -   elif target > curr:
+                    -   l = m + 1
+                -   else:
+                    -   r = m - 1
+            -   return -1
+    -   Bubble sort and selection sort suck. Both O(n^2).
+    -   Merge sort and quick sort are both good and, in the average case, O(n Log(n)).
+    -   Merge sort:
+        -   Worse case is O(n Log(n)).
+        -   From Algorithms class:
+            -   like quicksort in that it recursively splits array and builds it back in right order (both also divide-and-conquer)
+            -   divide array into 2 halves, recursively sort halves, merge results
+            -   recursive calls then sorting action (contra quicksort); "on the way up"; only way sorting occurs is through these "on the way up" merges
+            -   pro: guaranteed N log N performance
+            -   con: extra space proportional to N (aux array for merging)
+            -   time efficiency: average, best, and worst are all O(N log N); does require some aux space
+        -   All the work happens in the merging where consider both arrays and pick the smallest element to copy to main array each time. Base case is merging two 1-element arrays (or null arrays) because these are sorted by definition.
+        -   Simplified pseudocode:
+            -   if len(list) < 2: return list
+            -   sorted_first = mergesort(first_half)
+            -   sorted_second = mergesort(second_half)
+            -   return merge(sorted_first, sorted_second)
+        -   Most important part is merging the sorted lists. For this, just add smallest element each time until one of the lists is empty, and then copy any remaining elements over.
+        -   Usually stable.
+    -   Quicksort:
+        -   Worse case is O(n^2) when array already sorted, but small constant factor and can be in-place. Can also mitigate / check for the worst degenerate case.
+        -   From Algorithms class:
+            -   array rearranged such that, when two subarrays sorted, the whole array is ordered (contra merge where array is broken into 2 subarrays to be sorted and then combined to make whole ordered array)
+            -   recursive calls happen after working on whole array
+            -   partition/pivot not necessarily in middle  
+                Or necessarily the median value, leading to the worst case performance.
+            -   improvements: insertion sort for tiny arrays, median of 3, randomize beforehand
+            -   pros: average case N log N, in-place so small usage of memory (small aux stack), shorter inner loop so fast in practice as well
+            -   cons: worst case is quadratic, happens with already sorted array (where pivot = first item)
+            -   time efficiency: average & best are O(N log N), worst is O(N^2), small constant factor
+        -   To partition, have two pointers at each end working toward each other. Stop pointers when each reaches a value out of place. Swap them.
+            -   This results in all the smaller (than some _x_) values on the left side and all the larger values on the right side—though each side is not itself sorted yet.
+        -   Simplified pseudocode:
+            -   pivot = partition(list)
+            -   quicksort(list[:pivot])
+            -   quicksort(list[pivot:])
+        -   Usually not stable.
+        -   A good resource is here: #link [http://www.algolist.net/Algorithms/Sorting/Quicksort](http://www.algolist.net/Algorithms/Sorting/Quicksort)
+            -   And also, of course, visualgo: [http://visualgo.net/](http://visualgo.net/)
+    -   Difference is that in mergesort, the sorting action happens on the way up (when ordered subarrays are merged), whereas in quicksort, the sorting happens on the way down when the (sub)array is split and the low and high elements are separated and the pivot element is placed in its correct final position.
+        -   "The difference between the two is basically which linear operation they leverage. QuickSort is efficient because you can partition a list into items that come before and items that come after a given item in linear time. MergeSort is efficient because given two already sorted lists you can combine the two, and maintain sorted order, in linear time."
+-   Dynamic Programming & Memoization:
+    -   Top-down recursion can be memory-intensive because of building up the call stack. Can avoid by going bottom-up and using DP.  
+        Current point.
+    -   DP often involves making a binary decision at each (bottom-up) step, e.g., do I include this coin / item / character in my knapsack / sum / subsequence. If I do include it, is that more optimal (value or stock market profit or so on) than if I don't, where each calculation usually makes use of previously calculated optima or solutions to subproblems.
+        -   To get those previous locally optimal calculations, we generally use a matrix or list to store the previous solutions. But sometimes that can store more state than we really need, see e.g. the bottom-up Fibonacci implementation where we can store the answers to the previous subproblems we need in just 2 variables.
+        -   Always think: at step n, what happens if I *do* include this thing? What happens if I don't? What do I need to compare and take the max of? And how do I use my answer to step n-1?
+    -   Interview Cake:
+        -   "Dynamic programming is kind of like the next step up from greedy . You're taking that idea of "keeping track of what we need in order to update the best answer so far," and applying it to situations where the new best answer so far might not just have to do with the previous answer, but some other earlier answer as well.
+        -   So as you can see in this problem, we kept track of all of our previous answers to smaller versions of the problem (called "subproblems") in a big list called ways_of_doing_n_cents.
+        -   Again, same idea of keeping track of what we need in order to update the answer as we go, like we did when storing the max product of 2, min product of 2, etc in the highest product of 3 question. Except now the thing we need to keep track of is all our previous answers, which we're keeping in a list.
+        -   We built that list bottom-up, but we also talked about how we could do it top-down and memoize. Going bottom-up is cleaner and usually more efficient, but often it's easier to think of the top-down version first and try to adapt from there."
+        -   When we memoize (cache a subproblem's answer / recursive function's output so we don't need to recompute it again), the memoization dictionary probably needs to be outside the function to save/share state. I.e., make a class. Interview Cake #5: [https://www.interviewcake.com/question/python/coin](https://www.interviewcake.com/question/python/coin). Don't _always_ have to, can sometimes just pass a default list or dict (be careful of the default mutable gotcha here).
+    -   Memoization is top-down depth-first and DP is bottom-up breadth-first:
+        -   [http://stackoverflow.com/questions/27609246/if-memoization-is-top-down-depth-first-and-dp-is-bottom-up-breadth-first-what?rq=1](http://stackoverflow.com/questions/27609246/if-memoization-is-top-down-depth-first-and-dp-is-bottom-up-breadth-first-what?rq=1)
+        -   [http://blog.racket-lang.org/2012/08/dynamic-programming-versus-memoization.html](http://blog.racket-lang.org/2012/08/dynamic-programming-versus-memoization.html)
+    -   Tushar Roy on the 0-1 knapsack problem: [https://www.youtube.com/watch?v=8LusJS5-AGo](https://www.youtube.com/watch?v=8LusJS5-AGo)
+-   Advanced Algorithms & Data Structures & Math:  
+    Incomplete.
+    -   Dynamic Programming overview:
+        -   General approach from recursion:
+            -   Find the recurrence relation.
+            -   Start with top-down recursion, then use a cache to memoize.
+            -   Then to save space, move to bottom-up DP with a table.
+            -   And then finally, try to use O(1) space with just variables.
+            -   [https://leetcode.com/problems/house-robber/discuss/156523/From-good-to-great.-How-to-approach-most-of-DP-problems](https://leetcode.com/problems/house-robber/discuss/156523/From-good-to-great.-How-to-approach-most-of-DP-problems).
+            -   Another one demonstrating the evolution: [https://leetcode.com/problems/decode-ways/discuss/30451/Evolve-from-recursion-to-dp](https://leetcode.com/problems/decode-ways/discuss/30451/Evolve-from-recursion-to-dp)
+        -   Emblematic problems:
+            -   Easy:
+                -   [https://leetcode.com/problems/house-robber/description/](https://leetcode.com/problems/house-robber/description/)
+                    -   code:
+                        -   def rob(self, nums):
+                            -   prev1 = prev2 = 0
+                            -   for n in nums:
+                                -   prev1, prev2 = max(prev2 + n, prev1), prev1
+                            -   return prev1
+            -   Medium:
+                -   [https://leetcode.com/problems/decode-ways/description/](https://leetcode.com/problems/decode-ways/description/)
+                    -   code:
+                        -   def numDecodings(self, s):
+                            -   #dp[i] =
+                            -   #dp[i-1] if dp[i] != 0
+                            -   #+ dp[i-2] if 9 < dp[i-2:i] < 27
+                            -   if not s or s[0] == '0': return 0
+                            -   pre = cur = 1
+                            -   for i, c in enumerate(s[1:]):
+                                -   if c == '0': cur = 0
+                                -   if 9 < int(s[i:i+2]) < 27:
+                                    -   cur = cur + pre
+                                    -   pre = cur - pre
+                                -   else: pre = cur
+                            -   return cur
+            
+    -   Knuth-Morris-Pratt:
+        -   the key is that if we have a prefix == suffix match in the substring up to the pattern[i] where pattern[i] stopped matching with text[j], then the suffix suf must also be the last characters we saw in text, text[ j-len(suf) : j ]; and since this substring suf is equal to some prefix pre, we can slide the pattern over, match up pre with text[ j-len(suf) : j ], and start trying to match again at pattern[ len(p) ] and text[j]
+        -   [https://www.wikiwand.com/en/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm](https://www.wikiwand.com/en/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
+        -   [https://www.youtube.com/watch?v=GTJr8OvyEVQ](https://www.youtube.com/watch?v=GTJr8OvyEVQ)
+    -   Bloom filters:
+        -   [http://prakhar.me/articles/bloom-filters-for-dummies/](http://prakhar.me/articles/bloom-filters-for-dummies/)
+        -   Tells you either that a value is _possibly_ in the set or that it's _definitely_ _not_ in the set.
+        -   I.e., some false positives, but guaranteed no false negatives. Probabilistic data structure.
+    -   Trie and suffix trees:
+    -   Union-find / disjoint-set:
+        -   Network connectivity, connected components
+        -   Basic idea is that each distinct subset is identified by its root, so if two elements have the same root, they're in the same set; and to merge, just need to make one subset's root the other subset's
+        -   [https://www.cs.princeton.edu/~rs/AlgsDS07/01UnionFind.pdf](https://www.cs.princeton.edu/~rs/AlgsDS07/01UnionFind.pdf)
+        -   Useful for questions where I need to merge disjoint sets or network-like problems etc. like [https://leetcode.com/problems/number-of-islands-ii/description/:](https://leetcode.com/problems/number-of-islands-ii/description/:)
+            -   clear answer: [https://leetcode.com/problems/number-of-islands-ii/discuss/75459/JavaPython-clear-solution-with-UnionFind-Class-(Weighting-and-Path-compression)](https://leetcode.com/problems/number-of-islands-ii/discuss/75459/JavaPython-clear-solution-with-UnionFind-Class-(Weighting-and-Path-compression))
+            -   [https://leetcode.com/problems/number-of-islands-ii/discuss/75468/Compact-Python](https://leetcode.com/problems/number-of-islands-ii/discuss/75468/Compact-Python).
+            -   also [https://leetcode.com/problems/friend-circles/submissions/](https://leetcode.com/problems/friend-circles/submissions/)
+        -   Union-find template code:
+            -   class UnionFind(object):
+                -   def __init__(self, n):
+                    -   self.count = n
+                    -   self.parent = [_ for _ in xrange(n)]
+                    -   self.rank = [1 for _ in xrange(n)]
+                -   def find(self, k):
+                    -   while k != self.parent[k]:
+                        -   self.parent[k] = self.parent[self.parent[k]]
+                        -   k = self.parent[k]
+                    -   return k
+                -   def union(self, k1, k2):
+                    -   k1, k2 = self.find(k1), self.find(k2)
+                    -   if k1 == k2: return
+                    -   # ensure k1 is smaller component
+                    -   if self.rank[k1] > self.rank[k2]:
+                        -   k1, k2 = k2, k1
+                    -   self.parent[k1] = k2
+                    -   self.rank[k2] += self.rank[k1]
+                    -   self.count -= 1
+    -   A*:
+    -   LRU/LFU cache:  
+        Least recently used item is invalidated / evicted when cache is full.
+        -   [https://www.kunxi.org/blog/2014/05/lru-cache-in-python/](https://www.kunxi.org/blog/2014/05/lru-cache-in-python/)
+        -   The idea here is to use an OrderedDict and when returning an item, pop and re-insert to maintain the order invariant. popitem(last=False) lets us pop off the tail, i.e., in FIFO order.
+        -   from collections import OrderedDict
+        -   class LRUCache:
+            -   def __init__(self, capacity):
+                -   self.capacity = capacity
+                -   self.cache = OrderedDict()
+            -   def get(self, key):
+                -   if key not in self.cache: return -1
+                -   val = self.cache.pop(key)
+                -   self.cache[key] = val
+                -   return val
+            -   def set(self, key, value):
+                -   try:
+                    -   self.cache.pop(key)
+                -   except KeyError:
+                    -   if len(self.cache) == self.capacity:
+                        -   self.cache.popitem(last=False)
+                -   self.cache[key] = value
+        -   Without OrderedDict, would have to create my own. Basically would have a normal dictionary and then a doubly linked list. The dictionary would map each key to its node; there would be dummy head and tail pointers; and I'd add to the tail.prev and remove/invalidate from the head.next:
+            -   [https://leetcode.com/problems/lru-cache/discuss/45926/Python-Dict-+-Double-LinkedList](https://leetcode.com/problems/lru-cache/discuss/45926/Python-Dict-+-Double-LinkedList)
+            -   like this:
+                -   class LLNode(object):
+                    -   def __init__(self, key=0, val=0):
+                        -   self.key = key
+                        -   self.val = val
+                        -   self.prev = None
+                        -   self.next = None
+                -   class LRUCache(object):
+                    -   def __init__(self, capacity):
+                        -   # dict mapping key to LLNode
+                        -   self.cache = {}
+                        -   # dummy nodes to simplify
+                        -   # head -next-> node <-prev- tail
+                        -   # remove from head, add to tail
+                        -   self.head = LLNode()
+                        -   self.tail = LLNode()
+                        -   self.head.next = self.tail
+                        -   self.tail.prev = self.head
+                        -   self.capacity = capacity
+                    -   def get(self, key):
+                        -   if key not in self.cache: return -1
+                        -   node = self.cache[key]
+                        -   new_n = LLNode(key, node.val)
+                        -   self._remove(node)
+                        -   self._add(new_n)
+                        -   self.cache[key] = new_n
+                        -   return new_n.val
+                    -   def put(self, key, value):
+                        -   if key in self.cache:
+                            -   self._remove(self.cache[key])
+                        -   elif len(self.cache) >= self.capacity:
+                            -   to_remove = self.head.next
+                            -   self.cache.pop(to_remove.key)
+                            -   self._remove(to_remove)
+                        -   node = LLNode(key, value)
+                        -   self._add(node)
+                        -   self.cache[key] = node
+                    -   def _remove(self, node):
+                        -   p, n = node.prev, node.next
+                        -   p.next = n
+                        -   n.prev = p
+                    -   def _add(self, node):
+                        -   p = self.tail.prev
+                        -   p.next = node
+                        -   node.prev = p
+                        -   node.next = self.tail
+                        -   self.tail.prev = node
+        -   harder version is LFUCache where least frequently used item is evicted (so need to keep track of frequency / # of accesses) *and* ties are broken by least recent too  
+            [https://leetcode.com/problems/lfu-cache/description/](https://leetcode.com/problems/lfu-cache/description/)
+            -   use two dicts, one of which is an OrderedDict
+            -   from collections import defaultdict, OrderedDict
+            -   class LFUNode(object):
+                -   def __init__(self, val, freq=1):
+                    -   self.val = val
+                    -   self.freq = freq
+            -   class LFUCache(object):
+                -   def __init__(self, capacity):
+                    -   self.remain = capacity
+                    -   # need OrderedDict to break freq ties w LRU
+                    -   self.freq2node = defaultdict(OrderedDict)
+                    -   self.least_freq = 1
+                    -   self.key2node = defaultdict(LFUNode)
+                -   def _update(self, key, val=None):
+                    -   node = self.key2node[key]
+                    -   if not val: val = node.val
+                    -   freq = node.freq
+                    -   self.freq2node[freq].pop(key)
+                    -   if not len(self.freq2node[self.least_freq]):
+                        -   self.least_freq += 1
+                    -   node.val, node.freq = val, freq + 1
+                    -   self.freq2node[freq+1][key] = node
+                    -   self.key2node[key] = node
+                -   def get(self, key):
+                    -   if key not in self.key2node: return -1
+                    -   self._update(key)
+                    -   return self.key2node[key].val
+                -   def put(self, key, value):
+                    -   if key in self.key2node:
+                        -   self._update(key, value)
+                        -   return
+                    -   self.key2node[key] = LFUNode(value)
+                    -   self.freq2node[1][key] = LFUNode(value)
+                    -   if not self.remain:
+                        -   # pop FIFO
+                        -   evicted = self.freq2node[self.least_freq].popitem(last=False)
+                        -   self.key2node.pop(evicted[0])
+                    -   else: self.remain -= 1
+                    -   self.least_freq = 1
+    -   Minimum edit distance:
+        -   [https://www.youtube.com/watch?v=We3YDTzNXEk](https://www.youtube.com/watch?v=We3YDTzNXEk)
+        -   Key ideas are that the edit distance of two strings x, y has to be least the edit distance of their prefixes, e.g. x[:-1], y; insertion and deletion are "symmetric"; if the current characters are the same, the edit distance at that point is just the edit distance of the two strings minus the current character; if not, they're the min of the diagonal, previous column and previous row edit distances + 1 (to represent the operation itself)
+            -   i.e., assume I did delete, so I look at the previous column for that edit distance, then add 1 for the current deletion; if I replaced, then it's the diagonal plus 1 etc.
+    -   Fisher-Yates shuffle:
+        -   import random
+        -   def inplace_shuffle(lst):
+            -   n = len(lst)
+            -   if n < 2: return lst
+            -   for i in xrange(n - 1):
+                -   repl = random.randint(i, n - 1)
+                -   if i != repl: lst[i], lst[repl] = lst[repl], lst[i]
+        -   The naive algorithm of swapping every number with any other number fails because the number of possible orderings it outputs is n^n, but the number of actual distinct possible orderings is n!, so by the pigeonhole principle, some distinct permutations / "buckets" will be overrepresented.
+    -   Dijkstra's:
+    -   Boyer-Moore majority vote algorithm:
+        -   O(n) time and O(1) space algo for finding majority element if it exists
+        -   used in LC #277 Find the Celebrity [https://leetcode.com/problems/find-the-celebrity/description/](https://leetcode.com/problems/find-the-celebrity/description/)
+            
+        -   [https://www.wikiwand.com/en/Boyer%E2%80%93Moore_majority_vote_algorithm](https://www.wikiwand.com/en/Boyer%E2%80%93Moore_majority_vote_algorithm)
+        -   Also in [https://leetcode.com/problems/majority-element/description/](https://leetcode.com/problems/majority-element/description/)
+        -   Basically have a candidate majority element and a count, increment the count if curr == candidate, if count is 0 then curr is new candidate, else decrement count.
+    -   Reverse a number (integer):
+        -   I.e., how to turn a number into its reverse _without_ converting to a string.
+        -   Basically use mod (%) and integer division (//) to find each digit and construct the reverse number.
+        -   def reverse(num):
+            -   rev = 0
+            -   while num:
+                -   rev *= 10
+                -   rev += num % 10
+                -   num /= 10
+            -   return num
+        -   E.g. useful for testing numerical palindromes without converting to a string.
+    -   Kadane's algorithm (maximum subarray problem):
+        -   [https://www.wikiwand.com/en/Maximum_subarray_problem](https://www.wikiwand.com/en/Maximum_subarray_problem)
+        -   def max_subarray(A):
+            -   max_ending_here = max_so_far = A[0]
+            -   for x in A[1:]:
+                -   max_ending_here = max(x, max_ending_here + x)
+                -   max_so_far = max(max_so_far, max_ending_here)
+            -   return max_so_far
+    -   Sieve of Eratosthenes:
+        -   [https://www.wikiwand.com/en/Sieve_of_Eratosthenes](https://www.wikiwand.com/en/Sieve_of_Eratosthenes)
+        -   [https://leetcode.com/problems/count-primes/description/](https://leetcode.com/problems/count-primes/description/)
+        -   def countPrimes(self, n):
+            -   if n < 2: return 0
+            -   arr = [1] * n
+            -   # from 2 to ceil(sqrt of n)
+            -   for i in xrange(2, int(n ** 0.5) + 1):
+                -   # if prime
+                -   if arr[i]:
+                    -   # increment by i starting at i squared
+                    -   for j in xrange(i ** 2, n, i):
+                        -   arr[j] = 0
+            -   count = sum([1 for x in arr if x])
+            -   return count - 2
+    -   Heaps:  
+        [https://docs.python.org/2/library/heapq.html](https://docs.python.org/2/library/heapq.html)
+        -   Heaps can be _very_ useful if I need to maintain some kind of min/max value, but it needs to be dynamically updated over time among other possible _previous_ values. Notably of course, the invariant just applies to the start/min of the list; the rest of the list remains unsorted.
+        -   Basically just initialize heap as a normal list (or use in-place heapify) and then use heaq.heappush(arr, x), heappop, and heapreplace to push, pop, and replace an item while maintaining min-heap invariant.
+        -   Meeting room variant where getting fewest # of rooms needed:  
+            [https://leetcode.com/problems/meeting-rooms-ii/description/](https://leetcode.com/problems/meeting-rooms-ii/description/)
+            -   intervals.sort(key=lambda x: x.start)
+            -   # keep track of min end time
+            -   heap = []
+            -   for n in intervals:
+                -   # heap[0] is always the min end time
+                -   # this means we can reuse this room but just need to update end
+                -   if heap and n.start >= heap[0]:
+                    -   heapreplace(heap, n.end)
+                -   # otherwise we need to allocate a new room
+                -   else:
+                    -   heappush(heap, n.end)
+            -   return len(heap)
+        -   Common hard problem of merging k sorted (linked) lists (O(n k log(k)):  
+            [https://leetcode.com/problems/merge-k-sorted-lists/description/](https://leetcode.com/problems/merge-k-sorted-lists/description/)
+            -   dummy = curr = ListNode(0)
+            -   h = [(n.val, n) for n in lists if n]
+            -   heapify(h)
+            -   while h:
+                -   # don't pop yet, only change heap size if nec
+                -   val, n = h[0]
+                -   if not n.next:
+                    -   heappop(h)
+                -   else:
+                    -   # insert new val, n tuple while keeping invar
+                    -   heapreplace(h, (n.next.val, n.next))
+                -   curr.next = n
+                -   curr = curr.next
+            -   return dummy.next
+    -   Backtracking:
+        -   Backtracking is a powerful technique. It allows us to try all possible configurations/solutions, but in an optimal and incremental order, so that we can eliminate wholesale bad approaches. Basically we generate partial solutions at each iteration: if it passes the constraint check, we recur deeper (DFS style); if not, we continue / "prune" that entire branch and backtrack up the search tree to an unexplored branch. We generate new solutions through a loop breadth-wise and explore them further through DFS recurrence. The n queens problem is a typical example.
+        -   Importantly, to differentiate from DFS, it's not enough to just continue, you often need to actively and selectively prune. For example, just having a visited set might not be enough, you might need to remove from the set after you've tried out that path (recurred deeper). See the word search problem.
+            -   For board/matrix problems, another way of doing it would be modifying the board _itself_. I.e., mark the board spot with a special character, DFS/recur deeper, then reset the board spot to original value.
+        -   Good summary of backtracking pattern/approach for subsets/permutations/etc. questions:
+            -   [https://leetcode.com/problems/permutations/discuss/18239/A-general-approach-to-backtracking-questions-in-Java-(Subsets-Permutations-Combination-Sum-Palindrome-Partioning)](https://leetcode.com/problems/permutations/discuss/18239/A-general-approach-to-backtracking-questions-in-Java-(Subsets-Permutations-Combination-Sum-Palindrome-Partioning))
+        -   Choose, (recursively) explore, un-choose (backtrack!) [https://www.youtube.com/watch?v=78t_yHuGg-0](https://www.youtube.com/watch?v=78t_yHuGg-0)
+        -   Word search:  
+            [https://leetcode.com/problems/word-search/description/](https://leetcode.com/problems/word-search/description/)
+            -   def exist(self, board, word):
+                -   for i, row in enumerate(board):
+                    -   for j, cell in enumerate(row):
+                        -   if cell != word[0]: continue
+                        -   visited = set()
+                        -   stk = [(i, j, 0, False)]
+                        -   while stk:
+                            -   x, y, word_i, backtrack = stk.pop()
+                            -   # prune branch
+                            -   if backtrack:
+                                -   visited.remove((x, y))
+                                -   continue
+                            -   if board[x][y] != word[word_i]: continue
+                            -   if word_i + 1 == len(word): return True
+                            -   visited.add((x, y))
+                            -   # add backtracking node before forward nodes
+                            -   stk.append((x, y, word_i, True))
+                            -   cands = []
+                            -   for a, b in [(-1,0), (0,-1), (0,1), (1,0)]:
+                                -   xa, yb = x + a, y + b
+                                -   if (xa < 0 or xa >= len(board) or yb < 0 or yb >= len(board[0])
+                                    -   or (xa, yb) in visited or board[xa][yb] != word[word_i+1]):
+                                    -   continue
+                                -   stk.append((xa, yb, word_i+1, False))
+                -   return False
+        -   N queens:
+            -   [https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/](https://www.geeksforgeeks.org/n-queen-problem-backtracking-3/)
+            -   [http://www.thecodenote.com/2017/05/beginners-guide-to-solving-n-queens.html](http://www.thecodenote.com/2017/05/beginners-guide-to-solving-n-queens.html)
+            -   code:
+                -   def isSafe(board, row, col):
+                    -   # Check this row on left side
+                    -   for i in range(col):
+                        -   if board[row][i] == 1:
+                            -   return False
+                    -   # Check upper diagonal on left side
+                    -   for i,j in zip(range(row,-1,-1), range(col,-1,-1)):
+                        -   if board[i][j] == 1:
+                            -   return False
+                    -   # Check lower diagonal on left side
+                    -   for i,j in zip(range(row,N,1), range(col,-1,-1)):
+                        -   if board[i][j] == 1:
+                            -   return False
+                    -   return True
+                -   def solveNQUtil(board, col):
+                    -   # base case: If all queens are placed
+                    -   # then return true
+                    -   if col >= N:
+                        -   return True
+                    -   # Consider this column and try placing
+                    -   # this queen in all rows one by one
+                    -   for i in range(N):
+                        -   if isSafe(board, i, col):
+                            -   # Place this queen in board[i][col]
+                            -   board[i][col] = 1
+                            -   # recur to place rest of the queens
+                            -   if solveNQUtil(board, col+1) == True:
+                                -   return True
+                        -   # If placing queen in board[i][col
+                        -   # doesn't lead to a solution, then
+                        -   # queen from board[i][col]
+                        -   board[i][col] = 0
+                    -   # if the queen can not be placed in any row in
+                    -   # this column col then return false
+                    -   return False
+        -   Android unlock patterns:
+            -   [https://leetcode.com/submissions/detail/175474501/](https://leetcode.com/submissions/detail/175474501/)
+            -   code:
+                -   def numberOfPatterns(self, m, n):
+                    -   # keep track of used keys and also can use math to figure out allowed jumps
+                    -   flags = [False] * 10
+                    -   # for index i + 1, disallowed 1-step moves
+                    -   illegal = [(3, 7, 9), (8,), (1, 7, 9), (6,), (-1,), (4,), (1, 3, 9), (2,), (1, 3, 7)]
+                    -   def dfs(prev, level):
+                        -   # base case
+                        -   if level == 1: return 1
+                        -   num_patterns, flags[prev] = 0, True
+                        -   for i in xrange(1, 10):
+                            -   # if satisfy constraint, recur deeper
+                            -   if not flags[i] and (i not in illegal[prev - 1] or flags[(i + prev) / 2]):
+                                -   num_patterns += dfs(i, level - 1)
+                            -   # otherwise continue / abandon branch (ie all solutions w this key as a successor)
+                        -   flags[prev] = False
+                        -   return num_patterns
+                    -   # many keys are symmetric
+                    -   return sum([dfs(1, i) * 4 + dfs(2, i) * 4 + dfs(5, i) for i in xrange(m, n + 1)])
+    -   DFS in detail:
+        -   Very common in island or flood fill-type problems. Make sure that I'm resetting the node or point to avoid infinite loops. I.e., once something passes the constraint, make sure I mark it in some way (could also just be a visited set or flags[i] boolean arr).
+        -   [https://leetcode.com/problems/flood-fill/description/](https://leetcode.com/problems/flood-fill/description/)
+            -   code:
+                -   def floodFill(self, image, sr, sc, newColor):
+                    -   def dfs(x, y, prev_color):
+                        -   # make sure we're within bounds
+                        -   if x < 0 or x >= len(image) or y < 0 or y >= len(image[0]):
+                            -   return
+                        -   curr_color = image[x][y]
+                        -   # make sure we don't loop indefinitely
+                        -   if image[x][y] != prev_color or image[x][y] == newColor:
+                            -   return
+                        -   # fill ..
+                        -   image[x][y] = newColor
+                        -   # .. recursively
+                        -   dfs(x - 1, y, prev_color)
+                        -   dfs(x, y - 1, prev_color)
+                        -   dfs(x, y + 1, prev_color)
+                        -   dfs(x + 1, y, prev_color)
+                    -   dfs(sr, sc, image[sr][sc])
+                    -   return image
+        -   For island problems where I have to count, make sure I'm not double-counting. Be careful with how I'm updating the return value. Either pass in the value each time or just add incrementally, but not both.
+            -   [https://leetcode.com/problems/max-area-of-island/description/](https://leetcode.com/problems/max-area-of-island/description/)
+            -   code:
+                -   def maxAreaOfIsland(self, grid):
+                    -   def dfs(i, j):
+                        -   if i < 0 or i >= len(grid) or j < 0 or j >= len(grid[0]) or not grid[i][j]:
+                            -   return 0
+                        -   grid[i][j] = 0
+                        -   return 1 + dfs(i-1, j) + dfs(i, j-1) + dfs(i, j+1) + dfs(i+1, j)
+                    -   res = 0
+                    -   for i, row in enumerate(grid):
+                        -   for j, cell in enumerate(row):
+                            -   if grid[i][j]:
+                                -   res = max(res, dfs(i, j))
+                    -   return res
+    -   Fenwick or binary indexed trees:
+        -   Used to store running prefix sums. Otherwise if I want to do both insert element at i as well as get sum of elements up to i, requires O(1) and O(n). With BITs, can reduce to O(log n) for both.
+        -   Based on the idea that any integer (index) can be represented as a sum of powers of 2.
+            -   "For example 19 can be represented as 16 + 2 + 1. Every node of BI Tree stores sum of n elements where n is a power of 2. For example, in the above first diagram for getSum(), sum of first 12 elements can be obtained by sum of last 4 elements (from 9 to 12) plus sum of 8 elements (from 1 to 8). The number of set bits in binary representation of a number n is O(Logn). Therefore, we traverse at-most O(Logn) nodes in both getSum() and update() operations. Time complexity of construction is O(nLogn) as it calls update() for all n elements."
+        -   [https://www.wikiwand.com/en/Fenwick_tree](https://www.wikiwand.com/en/Fenwick_tree)
+        -   [https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/](https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/)
+        -   [https://www.topcoder.com/community/data-science/data-science-tutorials/binary-indexed-trees/](https://www.topcoder.com/community/data-science/data-science-tutorials/binary-indexed-trees/)
+    -   Cyclic replacements / circle shifting w GCD:
+        -   [https://leetcode.com/articles/rotate-array/](https://leetcode.com/articles/rotate-array/)
+        -   [https://www.geeksforgeeks.org/array-rotation/](https://www.geeksforgeeks.org/array-rotation/)
+        -   [https://stackoverflow.com/questions/876293/fastest-algorithm-for-circle-shift-n-sized-array-for-m-position](https://stackoverflow.com/questions/876293/fastest-algorithm-for-circle-shift-n-sized-array-for-m-position)
+    -   Binary GCD / Stein's algorithm:
+        -   [https://www.geeksforgeeks.org/steins-algorithm-for-finding-gcd/](https://www.geeksforgeeks.org/steins-algorithm-for-finding-gcd/)
+    -   Matrix search etc.:
+        -   To find an element in a row- and column-wise sorted matrix, just start at bottom left element and move up if target is smaller, else move right. The intuition here is that these are basically two arrays sorted in reverse order. [https://www.geeksforgeeks.org/search-in-row-wise-and-column-wise-sorted-matrix/](https://www.geeksforgeeks.org/search-in-row-wise-and-column-wise-sorted-matrix/)
+        -   Saddleback search:
+            -   [http://typeocaml.com/2015/03/31/pearl-no-3-saddleback-search/](http://typeocaml.com/2015/03/31/pearl-no-3-saddleback-search/)
+        -   If it's a fully element sorted matrix (ie even more strictly sorted), can still do the same thing, but can also apply a binary search variant for O(log m + lg n) time. Basically binary search in a middle row, if not there, can know it's between last two elements and can eliminate the top left and bottom right "rectangles." [https://www.geeksforgeeks.org/search-element-sorted-matrix/](https://www.geeksforgeeks.org/search-element-sorted-matrix/)
+        -   Can use similar intuition for kth smallest questions, including for k pairs with smallest sums where can transform array sums into matrix:
+            -   [https://leetcode.com/problems/find-k-pairs-with-smallest-sums/description/](https://leetcode.com/problems/find-k-pairs-with-smallest-sums/description/) (reminder that heaps are great!)
+            
+    -   Merge k sorted lists (k-way merge):  
+        [https://www.wikiwand.com/en/K-way_merge_algorithm](https://www.wikiwand.com/en/K-way_merge_algorithm)
+        -   Using a heap is kinda cheating, but can just use merge 2 linked lists function recursively
+        -   code:
+            -   def mergeKLists(self, lists):
+                -   if not lists: return None
+                -   if len(lists) == 1: return lists[0]
+                -   def merge(l1, l2):
+                    -   dummy = curr = ListNode(0)
+                    -   while l1 and l2:
+                        -   if l1.val <= l2.val:
+                            -   curr.next = l1
+                            -   l1 = l1.next
+                        -   else:
+                            -   curr.next = l2
+                            -   l2 = l2.next
+                        -   curr = curr.next
+                    -   curr.next = l1 or l2
+                    -   return dummy.next
+                -   mid = len(lists) / 2
+                -   l = self.mergeKLists(lists[:mid])
+                -   r = self.mergeKLists(lists[mid:])
+                -   return merge(l, r)
+        -   important for external sort when arrays can't fit into main memory:
+            -   [https://www.wikiwand.com/en/External_sorting#/External_merge_sort](https://www.wikiwand.com/en/External_sorting#/External_merge_sort)
+            -   One example of external sorting is the external merge sort algorithm, which is a K-way merge algorithm. It sorts chunks that each fit in RAM, then merges the sorted chunks together.[1][2]
+            -   The algorithm first sorts M items at a time and puts the sorted lists back into external memory. It then recursively does a -way merge on those sorted lists. To do this merge, B elements from each sorted list are loaded into internal memory, and the minimum is repeatedly outputted.
+            -   For example, for sorting 900 megabytes of data using only 100 megabytes of RAM:
+                -   Read 100 MB of the data in main memory and sort by some conventional method, like quicksort.
+                -   Write the sorted data to disk.
+                -   Repeat steps 1 and 2 until all of the data is in sorted 100 MB chunks (there are 900MB / 100MB = 9 chunks), which now need to be merged into one single output file.
+                -   Read the first 10 MB (= 100MB / (9 chunks + 1)) of each sorted chunk into input buffers in main memory and allocate the remaining 10 MB for an output buffer. (In practice, it might provide better performance to make the output buffer larger and the input buffers slightly smaller.)
+                -   Perform a 9-way merge and store the result in the output buffer. Whenever the output buffer fills, write it to the final sorted file and empty it. Whenever any of the 9 input buffers empties, fill it with the next 10 MB of its associated 100 MB sorted chunk until no more data from the chunk is available. This is the key step that makes external merge sort work externally -- because the merge algorithm only makes one pass sequentially through each of the chunks, each chunk does not have to be loaded completely; rather, sequential parts of the chunk can be loaded as needed.
+    -   Topological sort for DAGs / Kahn's algorithm:
+        -   [https://en.wikipedia.org/wiki/Topological_sorting](https://en.wikipedia.org/wiki/Topological_sorting)
+            -   First, find a list of "start nodes" which have no incoming edges and insert them into a set S; at least one such node must exist in a non-empty acyclic graph. Then:
+            -   L ← Empty list that will contain the sorted elements
+            -   S ← Set of all nodes with no incoming edge
+            -   while S is non-empty do
+                -   remove a node n from S
+                -   add n to tail of L
+                -   for each node m with an edge e from n to m do
+                    -   remove edge e from the graph
+                    -   if m has no other incoming edges then
+                        -   insert m into S
+            -   if graph has edges then
+                -   return error (graph has at least one cycle)
+            -   else
+                -   return L (a topologically sorted order)
+            -   If the graph is a DAG, a solution will be contained in the list L (the solution is not necessarily unique). Otherwise, the graph must have at least one cycle and therefore a topological sorting is impossible.
+        -   [https://leetcode.com/problems/alien-dictionary/](https://leetcode.com/problems/alien-dictionary/)
+        -   code:
+            -   def alienOrder(self, words):
+                -   # a -> b
+                -   adj = defaultdict(set)
+                -   # in-degree
+                -   deg = {c: 0 for w in words for c in w}
+                -   for i, w1 in enumerate(words[:-1]):
+                    -   w2 = words[i + 1]
+                    -   for c1, c2 in zip(w1, w2):
+                        -   if c1 == c2: continue
+                        -   if c2 not in adj[c1]: deg[c2] += 1
+                        -   adj[c1].add(c2)
+                        -   break
+                -   res = ''
+                -   # start w 0 indegree nodes
+                -   q = deque([c for c in deg if not deg[c]])
+                -   while q:
+                    -   c = q.popleft()
+                    -   res += c
+                    -   for n in adj[c]:
+                        -   deg[n] -= 1
+                        -   if not deg[n]: q.append(n)
+                -   return res if len(res) == len(deg) else ''
+    -   Reservoir sampling:
+        -   [https://www.wikiwand.com/en/Reservoir_sampling](https://www.wikiwand.com/en/Reservoir_sampling)
+        -   O(n) code:
+            -   S has items to sample, R will contain the result
+            -   ReservoirSample(S[1..n], R[1..k])
+                -   // fill the reservoir array
+                -   for i = 1 to k
+                    -   R[i] := S[i]
+                -   // replace elements with gradually decreasing probability
+                -   for i = k+1 to n
+                    -   j := random(1, i) // important: inclusive range
+                    -   if j <= k
+                        -   R[j] := S[i]
+            -   The algorithm creates a "reservoir" array of size k and populates it with the first k items of S. It then iterates through the remaining elements of S until S is exhausted. At the ith element of S, the algorithm generates a random number between 1 and i. If j is less than or equal to k, the jth element of the reservoir array is replaced with the ith element of S. In effect, for all i, the ith element of S is chosen to be included in the reservoir with probability k/i. Similarly, at each iteration the jth element of the reservoir array is chosen to be replaced with probability 1/k * k/i, which simplifies to 1/i. It can be shown that when the algorithm has finished executing, each item in has equal probability (i.e. k / len(S)) of being chosen for the reservoir.
+    -   Sliding window approach:
+        -   example problem: [https://leetcode.com/problems/fruit-into-baskets/](https://leetcode.com/problems/fruit-into-baskets/) basically max subarray with 2 distinct elements)
+            -   def totalFruit(self, tree):
+                -   # sliding window approach
+                -   window = defaultdict(int)
+                -   max_len = j = 0
+                -   for i, fr in enumerate(tree):
+                    -   window[fr] += 1
+                    -   # j will automatically stop before i
+                    -   while len(window) > 2:
+                        -   prev = tree[j]
+                        -   window[prev] -= 1
+                        -   if not window[prev]:
+                            -   del window[prev]
+                        -   j += 1
+                    -   max_len = max(i - j + 1, max_len)
+                -   return max_len
+        -   template explained here: [https://leetcode.com/problems/find-all-anagrams-in-a-string/discuss/92007/sliding-window-algorithm-template-to-solve-all-the-leetcode-substring-search-problem](https://leetcode.com/problems/find-all-anagrams-in-a-string/discuss/92007/sliding-window-algorithm-template-to-solve-all-the-leetcode-substring-search-problem)
+        -   note that for the anagram problem ([https://leetcode.com/problems/find-all-anagrams-in-a-string/](https://leetcode.com/problems/find-all-anagrams-in-a-string/)) the window stays a constant size as it slides to the right. for the fruit problem, each time the window moves 1 to the right, if the window no longer fits the criteria, we shrink the window starting from the left end of it
+    -   Combinatorics:
+        -   permutations = order matters, _arrangements_
+            -   n permute r = n! / (n-r)!
+        -   combinations = order does not matter, _selections_ of elements
+            -   n choose r = n! / (r! * (n-r)!)
+        
+-   Common or Noteworthy Problems / (Named) Algorithms
+    -   Knuth-Morris-Pratt:
+        -   class Solution(object):  
+            [https://leetcode.com/problems/implement-strstr](https://leetcode.com/problems/implement-strstr)
+            -   def strStr(self, haystack, needle):
+                -   if not needle: return 0
+                -   if not haystack: return -1
+                -   next_arr = self.create_next(needle)
+                -   i = j = 0
+                -   while i < len(haystack) and j < len(needle):
+                    -   if haystack[i] == needle[j]:
+                        -   # Matched, so return the haystack's match start index.
+                        -   if j == len(needle) - 1:
+                            -   return i - len(needle) + 1
+                        -   i, j = i + 1, j + 1
+                    -   else:
+                        -   # Slide pattern over.
+                        -   if j: j = next_arr[j-1]
+                        -   else: i += 1
+                -   return -1
+            -   # Build next jump table.
+            -   def create_next(self, pattern):
+                -   next_arr = [0] * len(pattern)
+                -   pre_i, suf_i = 0, 1
+                -   while suf_i < len(pattern):
+                    -   # Found prefix-suffix match.
+                    -   if pattern[pre_i] == pattern[suf_i]:
+                        -   next_arr[suf_i] = pre_i + 1
+                        -   pre_i, suf_i = pre_i + 1, suf_i + 1
+                    -   else:
+                        -   if pre_i:
+                            -   pre_i = next_arr[pre_i-1]
+                        -   else:
+                            -   next_arr[suf_i] = 0
+                            -   suf_i += 1
+                -   return next_arr
+    -   Making change:  
+        [https://www.interviewcake.com/question/python/coin](https://www.interviewcake.com/question/python/coin)
+        -   Task:
+            -   Write a function that, given:
+            -   an amount of money
+            -   a list of coin denominations
+            -   computes the number of ways to make amount of money with coins of the available denominations.
+        -   Code:
+            -   Bottom-up DP memoization:
+                -   def change_possibilities_bottom_up(amount, denominations):
+                    -   ways_of_doing_n_cents = [0] * (amount + 1)
+                    -   ways_of_doing_n_cents[0] = 1
+                    -   for coin in denominations:
+                        -   for higher_amount in xrange(coin, amount + 1):
+                            -   higher_amount_remainder = higher_amount - coin
+                            -   ways_of_doing_n_cents[higher_amount] += ways_of_doing_n_cents[higher_amount_remainder]
+                    -   return ways_of_doing_n_cents[amount]
+    -   Maximum sum subarray / Kadane's algorithm:  
+        [https://leetcode.com/problems/best-time-to-buy-and-sell-stock/](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+        -   Task:
+            -   find the contiguous subarray which has the largest sum
+        -   Algorithm:
+            -   "a scan through the array values, computing at each position the maximum (positive sum) subarray ending at that position. This subarray is either empty (in which case its sum is zero) or consists of one more element than the maximum subarray ending at the previous position. The algorithm only needs to keep track of the ending position because the implied starting position is just after the last position at which the sum went negative; a higher sum can always be found by dropping any negative-sum prefix."  
+                [https://www.wikiwand.com/en/Maximum_subarray_problem](https://www.wikiwand.com/en/Maximum_subarray_problem)
+            -   "look for all positive contiguous segments of the array (max_ending_here is used for this). And keep track of maximum sum contiguous segment among all positive segments (max_so_far is used for this). Each time we get a positive sum compare it with max_so_far and update max_so_far if it is greater than max_so_far"  
+                [http://www.geeksforgeeks.org/largest-sum-contiguous-subarray/](http://www.geeksforgeeks.org/largest-sum-contiguous-subarray/)
+            -   Basically, keep accumulating sum (max_ending_here) until the sum becomes negative, at which point you start over again (e.g., set back to 0). Then max_so_far is max_ending_here if the latter is greater than the previous max_so_far. The key is that no solution will include a negative sum prefix (because the sum could be larger if it just left that prefix off).
+        -   Pseudocode:  
+            Complexity: O(N).
+            -   Wiki:
+                -   def max_subarray(A):
+                    -   max_ending_here = max_so_far = 0
+                    -   for x in A:
+                        -   max_ending_here = max(0, max_ending_here + x)
+                        -   max_so_far = max(max_so_far, max_ending_here)
+                    -   return max_so_far
+            -   Not as clean:
+                -   def maxSubArraySum(a,size):
+                    -   max_so_far = -maxint - 1
+                    -   max_ending_here = 0
+                    -   for i in range(0, size):
+                        -   max_ending_here = max_ending_here + a[i]
+                        -   if (max_so_far < max_ending_here):
+                            -   max_so_far = max_ending_here
+                        -   if max_ending_here < 0:
+                            -   max_ending_here = 0
+                    -   return max_so_far
+        -   Examples:
+            -   [https://leetcode.com/problems/best-time-to-buy-and-sell-stock/](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+                -   Say you have an array for which the ith element is the price of a given stock on day i.
+                -   If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+                -   Example 1:
+                    -   Input: [7, 1, 5, 3, 6, 4]
+                    -   Output: 5
+                    -   max. difference = 6-1 = 5 (not 7-1 = 6, as selling price needs to be larger than buying price)
+                -   Example 2:
+                    -   Input: [7, 6, 4, 3, 1]
+                    -   Output: 0
+                    -   In this case, no transaction is done, i.e. max profit = 0.
+                -   def maxProfit(self, prices):
+                    -   """
+                    -   :type prices: List[int]
+                    -   :rtype: int
+                    -   """
+                    -   max_curr = max_so_far = 0
+                    -   for i, price in enumerate(prices[1:]):
+                        -   max_curr = max(0, max_curr + price - prices[i])
+                        -   max_so_far = max(max_so_far, max_curr)
+                    -   return max_so_far
+    -   Maximum size subarray sum equals _k_:  
+        [https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/](https://leetcode.com/problems/maximum-size-subarray-sum-equals-k/)
+        -   Task:
+            -   Given an array nums and a target value k, find the maximum length of a subarray that sums to k. If there isn't one, return 0 instead.
+            -   Note: The sum of the entire nums array is guaranteed to fit within the 32-bit signed integer range.
+            -   Example 1:
+                -   Given nums = [1, -1, 5, -2, 3], k = 3,
+                -   return 4. (because the subarray [1, -1, 5, -2] sums to 3 and is the longest)
+            -   Example 2:
+                -   Given nums = [-2, -1, 2, 1], k = 1,
+                -   return 2. (because the subarray [-1, 2] sums to 1 and is the longest)
+            -   Follow Up: Can you do it in O(n) time?
+        -   Code:
+            -   def maxSubArrayLen(self, nums, k):
+                -   """
+                -   :type nums: List[int]
+                -   :type k: int
+                -   :rtype: int
+                -   """
+                -   sum_dict = {0: -1}
+                -   ans = acc = 0
+                -   for i, num in enumerate(nums):
+                    -   acc += num
+                    -   if acc not in sum_dict: sum_dict[acc] = i
+                    -   if acc-k in sum_dict: ans = max(ans, i - sum_dict[acc-k])
+                -   return ans
+    -   Maximum depth of binary tree:  
+        [https://leetcode.com/problems/maximum-depth-of-binary-tree/](https://leetcode.com/problems/maximum-depth-of-binary-tree/)
+        -   Task:
+            -   Given a binary tree, find its maximum depth.
+            -   The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
+        -   Code:
+            -   Recursive:
+                -   # Definition for a binary tree node.
+                -   # class TreeNode:
+                -   # def __init__(self, x):
+                -   # self.val = x
+                -   # self.left = None
+                -   # self.right = None
+                -   class Solution:
+                    -   # @param {TreeNode} root
+                    -   # @return {integer}
+                    -   def maxDepth(self, root):
+                        -   # Base case: no node.
+                        -   if not root: return 0
+                        -   # Recursive case: the maximum of the depths of the left and right sides plus the root depth (1).
+                        -   return max(Solution.maxDepth(self, root.left), Solution.maxDepth(self, root.right)) + 1
+            -   Iterative:
+                -   from collections import deque
+                -   def maxDepth(self, root):
+                    -   """
+                    -   :type root: TreeNode
+                    -   :rtype: int
+                    -   """
+                    -   # Iterative method: count number of levels.
+                    -   if not root: return 0
+                    -   q, depth = deque(), 0
+                    -   q.append(root)
+                    -   while(True):
+                        -   nodect = len(q)
+                        -   if not nodect: return depth
+                        -   depth += 1
+                        -   while nodect:
+                            -   node = q.popleft()
+                            -   if node.left: q.append(node.left)
+                            -   if node.right: q.append(node.right)
+                            -   nodect -= 1
+    -   Binary tree paths  
+        [https://leetcode.com/problems/binary-tree-paths/](https://leetcode.com/problems/binary-tree-paths/)
+        -   Task:
+            -   Given a binary tree, return all root-to-leaf paths.
+            -   For example, given the following binary tree:
+                -   1
+                -   / \
+                -   2 3
+                -   \
+                -   5
+            -   All root-to-leaf paths are:
+            -   ["1->2->5", "1->3"]
+        -   Code:
+            -   DFS recursive:
+                -   def binaryTreePaths(self, root):
+                    -   """
+                    -   :type root: TreeNode
+                    -   :rtype: List[str]
+                    -   """
+                    -   if not root: return []
+                    -   res = []
+                    -   self.dfs(root, "", res)
+                    -   return res
+                -   def dfs(self, root, ret_str, res):
+                    -   if not root.left and not root.right:
+                        -   res.append(ret_str + str(root.val))
+                    -   if root.left:
+                        -   self.dfs(root.left, ret_str + str(root.val) + '->', res)
+                    -   if root.right:
+                        -   self.dfs(root.right, ret_str + str(root.val) + '->', res)
+            -   DFS iterative (with stack):
+                -   def binaryTreePaths1(self, root):
+                    -   if not root:
+                        -   return []
+                    -   res, stack = [], [(root, "")]
+                    -   while stack:
+                        -   node, ls = stack.pop()
+                        -   if not node.left and not node.right:
+                            -   res.append(ls+str(node.val))
+                        -   if node.right:
+                            -   stack.append((node.right, ls+str(node.val)+"->"))
+                        -   if node.left:
+                            -   stack.append((node.left, ls+str(node.val)+"->"))
+                    -   return res
+            -   BFS (with queue):
+                -   def binaryTreePaths2(self, root):
+                    -   if not root:
+                        -   return []
+                    -   res, queue = [], collections.deque([(root, "")])
+                    -   while queue:
+                        -   node, ls = queue.popleft()
+                        -   if not node.left and not node.right:
+                            -   res.append(ls+str(node.val))
+                        -   if node.left:
+                            -   queue.append((node.left, ls+str(node.val)+"->"))
+                        -   if node.right:
+                            -   queue.append((node.right, ls+str(node.val)+"->"))
+                    -   return res
+    -   Single number:  
+        [https://leetcode.com/problems/single-number/](https://leetcode.com/problems/single-number/)
+        -   Task:
+            -   Given an array of integers, every element appears twice except for one. Find that single one.
+            -   Note:
+            -   Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+        -   Code:
+            -   My non-xor one:
+                -   def singleNumber(self, nums):
+                    -   """
+                    -   :type nums: List[int]
+                    -   :rtype: int
+                    -   """
+                    -   # 1, 1, 2, 3, 3
+                    -   # 1, 2, 2
+                    -   # 1, 1, 2, 2, 3
+                    -   nums.sort()
+                    -   for i, n in enumerate(nums):
+                        -   # If odd number of elements and on last element, must be odd man out.
+                        -   if len(nums) % 2 != 0 and i == len(nums) - 1: return n
+                        -   # Compare every pair.
+                        -   if i % 2 != 0: continue
+                        -   if n != nums[i+1]: return n
+            -   XOR solutions (xor of the same numbers returns 0; xor of a nonzero number and zero returns the nonzero number):
+                -   def singleNumber(self, nums):
+                    -   res = 0
+                    -   for num in nums:
+                        -   res ^= num
+                    -   return res
+                -   def singleNumber(self, nums):
+                    -   return reduce(lambda x, y: x ^ y, nums)
+    -   Reverse linked list:  
+        [https://leetcode.com/problems/reverse-linked-list/](https://leetcode.com/problems/reverse-linked-list/)
+        -   Task:
+            -   Reverse a singly linked list.
+            -   Hint: A linked list can be reversed either iteratively or recursively. Could you implement both?
+        -   Code:
+            -   Concise iterative:
+                -   def reverseList(self, head):
+                    -   """
+                    -   :type head: ListNode
+                    -   :rtype: ListNode
+                    -   """
+                    -   prev = None
+                    -   curr = head
+                    -   # Change one link at a time.
+                    -   while(curr is not None):
+                        -   # Hold on to next node since will redirect link.
+                        -   next = curr.next
+                        -   # Reverse link direction.
+                        -   curr.next = prev
+                        -   # Update prev pointer.
+                        -   prev = curr
+                        -   # Update curr pointer for next iteration.
+                        -   curr = next
+                    -   # Not curr since will be None.
+                    -   return prev
+            -   Concise recursive:
+                -   def reverseList(self, head, prev=None):
+                    -   """
+                    -   :type head: ListNode
+                    -   :rtype: ListNode
+                    -   """
+                    -   if not head: return prev
+                    -   # Reverse links, making sure to hold on to the next node.
+                    -   curr = head.next
+                    -   head.next = prev
+                    -   return self.reverseList(curr, head)
+                -   Worked out example:
+                    -   # 4 -> 1 -> 3 -> None
+                    -   # None <- 4 <- 1 <- 3
+                    -   # = 3 -> 1 -> 4 -> None
+                    -   #
+                    -   # curr = 1
+                    -   # head.next = 4.next = None -- None <- 4; curr = 1 -> 3 -> None
+                    -   # return reverseList(curr, head) = reverseList(1 -> 3 -> None, None <- 4)
+                    -   # curr = 3
+                    -   # head.next = 1.next = 4 -- None <- 4 <- 1; curr = 3 -> None
+                    -   # return reverseList(curr, head) = reverseList(3 -> None, None <- 4 <- 1)
+                    -   # curr = None
+                    -   # head.next = 3.next = 1 -- None <- 4 <- 1 <- 3; curr = None
+                    -   # return reverseList(None, None <- 4 <- 1 <- 3)
+                    -   # not head: return prev = None <- 4 <- 1 <- 3
+            -   Naive brute force iterative:
+                -   def reverseList(self, head):
+                    -   """
+                    -   :type head: ListNode
+                    -   :rtype: ListNode
+                    -   """
+                    -   if not head: return None
+                    -   ll_arr = []
+                    -   node = head
+                    -   while node:
+                        -   ll_arr.append(node.val)
+                        -   node = node.next
+                    -   r_cur = r_head = ListNode(ll_arr[-1])
+                    -   for ele in list(reversed(ll_arr[:-1])):
+                        -   r_cur.next = ListNode(ele)
+                        -   r_cur = r_cur.next
+                    -   return r_head
+    -   Valid parentheses:  
+        [https://leetcode.com/problems/valid-parentheses/](https://leetcode.com/problems/valid-parentheses/)
+        -   Code:
+            -   def isValid(self, s):
+                -   map = {'(': ')', '{': '}', '[': ']'}
+                -   # Use a list as a stack.
+                -   stack = []
+                -   for i, c in enumerate(s):
+                    -   if c in map:
+                        -   stack.append(c)
+                    -   elif c in map.values():
+                        -   # Also fails if stack is empty -> too many closing parens.
+                        -   if not stack or map[stack.pop()] != c: return False
+                -   return not stack
+    -   Remove duplicates from unsorted singly linked list:  
+        CTCI 2.1
+        -   Code:
+            -   With buffer / auxiliary data structure:
+                -   from linkedlist import Node
+                -   def remove_dupes(head):
+                    -   # Edge case where single node list.
+                    -   if not head.next_node: return head
+                    -   curr, prev = head, Node()
+                    -   dupes = {}
+                    -   while curr:
+                        -   if curr.data in dupes:
+                            -   prev.next_node = curr.next_node
+                        -   else:
+                            -   dupes[curr.data] = 1
+                            -   prev = curr
+                        -   curr = curr.next_node
+            -   Without buffer:
+                -   # Now do it without another data structure.
+                -   def remove_dupes2(head):
+                    -   if not head.next_node: return head
+                    -   curr, runner = head, head.next_node
+                    -   # Curr, not curr.next, because otherwise would miss last node.
+                    -   while curr:
+                        -   runner = curr
+                        -   while runner.next_node:
+                            -   # Compare using runner.next because no prev pointer.
+                            -   if curr.data == runner.next_node.data:
+                                -   runner.next_node = runner.next_node.next_node
+                            -   else:
+                                -   runner = runner.next_node
+                        -   curr = curr.next_node
+    -   Two sum:  
+        [https://leetcode.com/problems/two-sum/](https://leetcode.com/problems/two-sum/)
+        -   Task:
+            -   Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+            -   You may assume that each input would have exactly one solution.
+            -   Example:
+                -   Given nums = [2, 7, 11, 15], target = 9,
+                -   Because nums[0] + nums[1] = 2 + 7 = 9,
+                -   return [0, 1].
+        -   Code:
+            -   def twoSum(self, nums, target):
+                -   """
+                -   :type nums: List[int]
+                -   :type target: int
+                -   :rtype: List[int]
+                -   """
+                -   nums_tups = []
+                -   for i, num in enumerate(nums):
+                    -   diffs = [n[1] for n in nums_tups]
+                    -   if num in diffs:
+                        -   # diffs and nums are in sync
+                        -   return [diffs.index(num), i]
+                    -   else:
+                        -   nums_tups.append((num, target - num))
+    -   Add two numbers:  
+        [https://leetcode.com/problems/add-two-numbers/](https://leetcode.com/problems/add-two-numbers/)
+        -   Task:
+            -   You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+            -   You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+            -   Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+            -   Output: 7 -> 0 -> 8
+        -   Code:
+            -   def addTwoNumbers(self, l1, l2):
+                -   """
+                -   :type l1: ListNode
+                -   :type l2: ListNode
+                -   :rtype: ListNode
+                -   """
+                -   l1_str = ''
+                -   l2_str = ''
+                -   while l1.next != None:
+                    -   l1_str += str(l1.val)
+                    -   l1 = l1.next
+                -   l1_str += str(l1.val)
+                -   while l2.next != None:
+                    -   l2_str += str(l2.val)
+                    -   l2 = l2.next
+                -   l2_str += str(l2.val)
+                -   l1_num, l2_num = int(l1_str[::-1]), int(l2_str[::-1])
+                -   sum = l1_num + l2_num
+                -   sum_str_rev = str(sum)[::-1]
+                -   # Need a copy of root node to be able to return at the end since modifying while iterating.
+                -   root = ListNode(0)
+                -   curr = root
+                -   for c in sum_str_rev:
+                    -   l_curr = ListNode(int(c))
+                    -   curr.next = l_curr
+                    -   curr = curr.next
+                -   return root.next
+    -   Sparse matrix multiplication:  
+        [https://leetcode.com/problems/sparse-matrix-multiplication/](https://leetcode.com/problems/sparse-matrix-multiplication/)
+        -   Task:
+            -   Given two sparse matrices A and B, return the result of AB.
+            -   You may assume that A's column number is equal to B's row number.
+            -   Example:
+                -   A = [
+                    -   [ 1, 0, 0],
+                    -   [-1, 0, 3]
+                -   ]
+                -   B = [
+                    -   [ 7, 0, 0 ],
+                    -   [ 0, 0, 0 ],
+                    -   [ 0, 0, 1 ]
+                -   ]
+                    -   | 1 0 0 | | 7 0 0 | | 7 0 0 |
+                -   AB = | -1 0 3 | x | 0 0 0 | = | -7 0 3 |
+                    -   | 0 0 1 |
+        -   Code:
+            -   def multiply(self, A, B):
+                -   """
+                -   :type A: List[List[int]]
+                -   :type B: List[List[int]]
+                -   :rtype: List[List[int]]
+                -   """
+                -   # Matrix is a list of lists where each list is a row.
+                -   """
+                -   if not A or not B: return None
+                -   AB = [[0 for _ in B[0]] for _ in A]
+                -   # Iterate through rows of A.
+                -   for i, row_a in enumerate(A):
+                    -   # 0, 1
+                    -   #Iterate through cols of A.
+                    -   for j, ele_a in enumerate(row_a):
+                        -   # 0, 1, 2
+                        -   if ele_a:
+                            -   # Iterate through rows of B.
+                            -   for k, ele_b in enumerate(B[j]):
+                                -   # 0, 1, 2
+                                -   if ele_b:
+                                    -   AB[i][k] += A[i][k] * B[k][j]
+                -   return AB
+    -   ZigZag conversion:  
+        [https://leetcode.com/problems/zigzag-conversion/](https://leetcode.com/problems/zigzag-conversion/)
+        -   Task:
+            -   The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+                -   P A H N
+                -   A P L S I I G
+                -   Y I R
+            -   And then read line by line: "PAHNAPLSIIGYIR"
+            -   Write the code that will take a string and make this conversion given a number of rows:
+            -   string convert(string text, int nRows);
+            -   convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+        -   Code:
+            -   def convert(self, s, numRows):
+                -   # The key is that the distance down then up (or up then down) to get to the next letter on the current row is symmetric regardless of the horizontal distance traveled / the diagonal.
+                -   linenum = 1
+                -   ret_str = ''
+                -   ind = 0
+                -   # Have to alternate strategy for middle lines.
+                -   mid_cycle_index = 1
+                -   if numRows == 1: return s
+                -   for i in xrange(len(s)):
+                    -   ret_str += s[ind]
+                    -   # First line.
+                    -   if linenum == 1:
+                        -   ind += 2 * (numRows - 1)
+                    -   elif linenum == numRows:
+                        -   ind += 2 * (linenum - 1)
+                    -   else:
+                        -   if mid_cycle_index % 2 == 1:
+                            -   ind += 2 * (numRows - linenum)
+                        -   else:
+                            -   ind += 2 * (linenum - 1)
+                        -   mid_cycle_index += 1
+                    -   # Go to next line.
+                    -   if ind >= len(s):
+                        -   linenum += 1
+                        -   ind = linenum - 1 # ind is 0-based, linenum 1-based
+                        -   mid_cycle_index = 1
+                -   return ret_str
+    -   Meeting rooms:  
+        [https://leetcode.com/problems/meeting-rooms/](https://leetcode.com/problems/meeting-rooms/)
+        -   Task:
+            -   Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person could attend all meetings.
+            -   For example,
+                -   Given [[0, 30],[5, 10],[15, 20]],
+                -   return false.
+        -   Code:
+            -   # Definition for an interval.
+            -   # class Interval(object):
+            -   # def __init__(self, s=0, e=0):
+            -   # self.start = s
+            -   # self.end = e
+            -   def canAttendMeetings(self, intervals):
+                -   """
+                -   :type intervals: List[Interval]
+                -   :rtype: bool
+                -   """
+                -   if not intervals or len(intervals) == 1: return True
+                -   intvl_st = sorted(intervals, key=lambda x: x.start)
+                -   for i, intvl in enumerate(intvl_st[1:]):
+                    -   # i, not i-1, since already skipped first one in intvl_st[1:].
+                    -   prev = intvl_st[i]
+                    -   if intvl.start < prev.end: return False
+                -   return True
+    -   Iterative inorder traversal:  
+        [https://leetcode.com/problems/closest-binary-search-tree-value/](https://leetcode.com/problems/closest-binary-search-tree-value/)
+        -   def inorder_traversal(root):
+            -   stack = [root]
+            -   while stack:
+                -   curr = stack.pop()
+                -   if not curr.left and not curr.right:
+                    -   print curr.val
+                -   else:
+                    -   if curr.right: stack.append(curr.right)
+                    -   stack.append(Node(curr.val))  
+                        Dummy leaf node so next time will print right away.
+                    -   if curr.left: stack.append(curr.left)
+    -   Rotate a matrix 90 degrees:
+        -   A[:] = zip(*A[::-1])  
+            Reverse then transpose (rows as cols and vice versa).
+    -   Lowest common ancestor:
+        -   Can just use BST properties, one node needs to be in left subtree (< root value) and the other in the right subtree (> root)
+        -   Trickier for binary tree
+    -   Get linked list of binary tree leaves in-place:
+        -   [http://www.geeksforgeeks.org/connect-leaves-doubly-linked-list/](http://www.geeksforgeeks.org/connect-leaves-doubly-linked-list/)
+-   Python Misc.:
+-   Java Misc.:
+-   Data Engineering:
+    -   SQL:
+        -   Cheatsheet: [http://files.zeroturnaround.com/pdf/zt_sql_cheat_sheet.pdf](http://files.zeroturnaround.com/pdf/zt_sql_cheat_sheet.pdf)
+        -   Use HAVING when you want to filter on aggregate columns, WHERE won't work for that.
+            -   WHERE comes before GROUP BY; HAVING after.
+            -   HAVING requires aggregation, like "HAVING sum(population) > 256000".
+        -   "SELECT * FROM a LEFT OUTER JOIN b ON [a.id](http://a.id/) = b.a_id WHERE b IS NULL;" gets you the records that are _only_ in table a; the null part excludes the right-hand table's records / matching records are excluded
+            -   [https://blog.codinghorror.com/a-visual-explanation-of-sql-joins/](https://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
+        -   Order of clauses:
+            -   SELECT
+            -   FROM
+            -   WHERE
+            -   GROUP BY
+            -   HAVING
+            -   ORDER BY
+        -   When using a subquery with conditional logic, ensure the subquery is either scalar (returns just 1 value) or the operator is IN:
+        -   Case details:
+        -   Window functions:
+        -   Specific unique window functions:
+        -   Using count and case:
+        -   Unions vs. joins:
+        -   If every record in A necessarily includes information in B, A should have a foreign key that references a primary key on B to maintain referential integrity. E.g., if a row in A is inserted but doesn't have the B-related columns (the FK), it should be rejected.
+        -   In a 1:many relationship, the foreign key is the _"anchor"_ on the many side (the primary key that it references is the "anchor" on the 1 side).  
+            1:many = PK:FK (multiple records on FK side have PK values).
+        -   Normalized (no dupes) schema is better for writes; denormalized better for reads.
+        -   LIMIT:
+            -   SELECT * FROM tbl LIMIT 5,10;
+            -   returns rows 6-15  
+                The offset (the first number) is 0-indexed.
+        -   Get second highest value:
+            -   SELECT MAX( col )
+            -   FROM table
+            -   WHERE col < ( SELECT MAX( col ) FROM table );
+        -   Delete duplicate rows:  
+            Where cols 1-3 unique the table.
+            -   DELETE FROM MyTable
+            -   WHERE RowId NOT IN
+            -   (SELECT MIN(RowId) FROM MyTable GROUP BY Col1, Col2, Col3);
+        -   Order of operations:
+            -   FROM clause
+            -   WHERE clause  
+                This is why you can't reference a SELECT alias in the WHERE clause.
+            -   GROUP BY clause
+            -   HAVING clause
+            -   SELECT clause
+            -   ORDER BY clause  
+                You _can_ reference a SELECT alias in the ORDER BY.
+        -   In JOIN, can filter one table but not the other: [https://community.modeanalytics.com/sql/tutorial/sql-joins-where-vs-on/](https://community.modeanalytics.com/sql/tutorial/sql-joins-where-vs-on/)
+        -   VARCHAR vs. CHAR:
+            -   VARCHAR is variable-length.
+            -   CHAR is fixed length.
+            -   If your content is a fixed size, you'll get better performance with CHAR.
+        -   MySQL single quotes vs. backticks vs. double quotes:
+            -   [http://stackoverflow.com/questions/11321491/when-to-use-single-quotes-double-quotes-and-backticks-in-mysql](http://stackoverflow.com/questions/11321491/when-to-use-single-quotes-double-quotes-and-backticks-in-mysql)
+        -   SQL Cookbook:
+    -   MapReduce:
+        -   purpose:
+            -   scalable, parallelizable computations on big data
+            -   abstracts away looping
+            -   simple to write programs, just need to supply mapper and reducer functions
+        -   algorithm:
+            -   take a bunch (a list) of data items
+            -   system/master program splits list and gives a sublist to each (mapper) node
+            -   mapper takes its list and applies some map function to it that transforms the list of items into a list of key, value pairs
+            -   list of (k,v) pairs output to some buffer
+            -   system takes the lists of (k,v) pairs and filters them such that it can give each reducer node a list where all the keys are the same
+            -   reducer aggregates values (since system ensured they all share the same key)
+        -   example:
+        -   operates on a file in HDFS in a similar way. in HDFS, a file is split into chunks, or blocks. many mapper nodes can work on different blocks of the same file. then, reducer nodes can do the same. scales essentially linearly
+        -   Tez is Apache's MapReduce successor:
+    -   Hive:
+    -   Spark:
+        -   Spark is in-memory, more functional since it uses RDDs that distinguish between transformations and actions (enabling lazy execution/evaluation), and has playback abilities (owing to the lazy evaluation).
+        -   In-memory as in it doesn't write intermediate results to disk/HDFS like map-reduce does.
+    -   Dimensional Modeling:
+    -   Clickstream data dimensional modeling:
+    -   ETL optimization:  
+        Extract operational data from business sources, transform into required end format (e.g., facts & dimensions), load into data warehouse or mart.
+        -   Incremental loading:
+            -   [https://dwbi.org/etl/etl/53-methods-of-incremental-loading-in-data-warehouse](https://dwbi.org/etl/etl/53-methods-of-incremental-loading-in-data-warehouse)
+-   System Design & Distributed Systems:
+    -   HiredInTech:
+        -   [https://www.hiredintech.com/classrooms/system-design/lesson/59#](https://www.hiredintech.com/classrooms/system-design/lesson/59#)
+        -   A strong process is crucial to successfully solving system design questions. We broke it down into four steps:
+            -   **Scope** the problem: Don't make assumptions; Ask questions; Understand the constraints and use cases.
+            -   Sketch up an **abstract design** that illustrates the basic components of the system and the relationships between them.
+            -   Think about the **bottlenecks** these components face when the system scales.
+            -   Address these bottlenecks by using the fundamentals principles of **scalable system design.**
+        -   Make sure to _start_ with asking questions, what constraints are we under? Typical access patterns? How much data? How many requests? Etc.
+    -   (Database) Sharding:
+        -   Just partition data by hashing the primary key.
+        -   [https://www.hiredintech.com/classrooms/system-design/lesson/60](https://www.hiredintech.com/classrooms/system-design/lesson/60)
+        -   [http://highscalability.com/blog/2009/8/6/an-unorthodox-approach-to-database-design-the-coming-of-the.html](http://highscalability.com/blog/2009/8/6/an-unorthodox-approach-to-database-design-the-coming-of-the.html)
+        -   [http://www.addsimplicity.com/adding_simplicity_an_engi/2008/08/shard-lessons.html](http://www.addsimplicity.com/adding_simplicity_an_engi/2008/08/shard-lessons.html)
+        -   [https://www.percona.com/blog/2009/08/06/why-you-dont-want-to-shard/](https://www.percona.com/blog/2009/08/06/why-you-dont-want-to-shard/)
+        -   To fix the problem of hotspots (incoming data not evenly distributed), use a good hash function. To fix the problem of node failures or of being able to scale up (with naive hashing, would be forced to migrate tons of data / nearly all data to new nodes), use consistent (ring) hashing:
+            -   [https://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html](https://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html)
+            -   [http://michaelnielsen.org/blog/consistent-hashing/](http://michaelnielsen.org/blog/consistent-hashing/)
+                -   "But unlike naive hashing, consistent hashing requires only a relatively small amount of data to be moved: if you add a machine to the cluster, only the data that needs to live on that machine is moved there; all the other data stays where it is."
+            -   [https://akshatm.svbtle.com/consistent-hash-rings-theory-and-implementation](https://akshatm.svbtle.com/consistent-hash-rings-theory-and-implementation)
+        -   Could also use "dynamic" sharding where there's a specialized metadata locator service that points an incoming query to the right partition (basically just key:value store of key range:partition). Think, e.g., HDFS' NameNode. Easy to modify mappings, but single point of failure.
+        -   partioning is vertical; sharding horizontal on some attribute of the data, eg for users, sharded into a-m and n-z datasets; federation is splitting the data completely on some obvious data attribute, like putting all user data on one node and all purchases data on another
+    -   CAP:
+        -   A dismal guide to concurrency:  
+            [https://www.facebook.com/notes/facebook-engineering/a-dismal-guide-to-concurrency/379717628919/](https://www.facebook.com/notes/facebook-engineering/a-dismal-guide-to-concurrency/379717628919/)
+            -   "A Consistent/Available system means that reading and writing always works the way you expect, but requires a majority or quorum of nodes to be running in order to function. Think of a parliament that must have more than half of members present in order to hold a vote. If too many can't make it, say because a flood washes out the bridge, a quorum can't be formed and business can't proceed. But when enough members are in communication the decision-making process is fast and unambiguous.  
+                Impossible in larger-scale distributed systems.
+            -   Consistent/Partitionable means that the system can recover from failures, but requires so much extra coordination that it collapses under heavy use. Imagine having to send and receive a status report for every decision made at your company. You'll always be current, and when you come back from vacation you will never miss a thing, but making actual progress would be very slow.
+            -   Available/Partitionable means that you can always read and write values, but the values you read might be out of date. A classic example is gossip: at any point you might not know the latest on what Judy said to Bill but eventually word gets around. When you have new gossip to share you only have to tell one or two people and trust that in time it will reach everyone who cares. Spreading gossip among computers is a bit more reliable because they are endlessly patient and (usually) don't garble messages."
+        -   Eventually Consistent — [Amazon.com](http://amazon.com/) paper  
+            [http://queue.acm.org/detail.cfm?id=1466448](http://queue.acm.org/detail.cfm?id=1466448)
+            -   "Eventual consistency. This is a specific form of weak consistency; the storage system guarantees that if no new updates are made to the object, eventually all accesses will return the last updated value. If no failures occur, the maximum size of the inconsistency window can be determined based on factors such as communication delays, the load on the system, and the number of replicas involved in the replication scheme. The most popular system that implements eventual consistency is DNS (Domain Name System). Updates to a name are distributed according to a configured pattern and in combination with time-controlled caches; eventually, all clients will see the update.
+            -   The eventual consistency model has a number of variations that are important to consider:
+    -   ACID vs BASE:
+        -   ACID = atomicity, consistency (not the same as CAP consistency), isolation, durability
+        -   BASE = basically available, soft state, eventually consistent
+            -   Basically available = the system does guarantee availability, in terms of the CAP theorem.
+            -   Soft state = the state of the system may change over time, even without input (because of eventual consistency)
+            -   Eventual consistency = the system will become consistent over time, given that the system doesn't receive input during that time
+        -   Two ends of the CAP continuum: ACID focuses on consistency and BASE focuses on availability and partition tolerance—often relaxes consistency guarantees to e.g. eventual consistency. Maps pretty well to SQL vs NoSQL and to why the latter usually scales better.
+    -   Asynchronous vs synchronous:
+        -   sync means that processes must _wait_ for each other to complete before beginning execution
+        -   async means that other stuff can happen _while_ a process is executing
+        -   the meaning of synchronous/asynchronous is in the context of a global clock: operations are synchronous when they use the same global clock/lock, and asynchronous when they operate on their own clocks (i.e., so they don't have to wait for each other)
+        -   [http://stackoverflow.com/questions/748175/asynchronous-vs-synchronous-execution-what-does-it-really-mean](http://stackoverflow.com/questions/748175/asynchronous-vs-synchronous-execution-what-does-it-really-mean)
+    -   Case studies:
+        -   Pastebin or [bit.ly](http://bit.ly/):
+    -   Paxos and other consensus methods:
+        -   [https://www.quora.com/Distributed-Systems-What-is-a-simple-explanation-of-the-Paxos-algorithm](https://www.quora.com/Distributed-Systems-What-is-a-simple-explanation-of-the-Paxos-algorithm)
+    -   Numbers every programmer should know about latency, memory, etc.:
+    -   Designing Data-Intensive Applications notes:
+    -   Links:
+        -   General:
+        -   Concurrency:
+            -   [https://www.facebook.com/notes/facebook-engineering/a-dismal-guide-to-concurrency/379717628919/](https://www.facebook.com/notes/facebook-engineering/a-dismal-guide-to-concurrency/379717628919/)
+            -   [http://cs.lmu.edu/~ray/notes/introconcurrency/](http://cs.lmu.edu/~ray/notes/introconcurrency/)
+-   Machine Learning & Stats:
+    -   Algorithms:
+        -   Meta:
+            -   cheatsheets:
+                -   [https://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/](https://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/)
+                -   sci-kit learn flowchart: [http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html](http://scikit-learn.org/stable/tutorial/machine_learning_map/index.html)
+                -   SAS more readable / general: [https://blogs.sas.com/content/subconsciousmusings/2017/04/12/machine-learning-algorithm-use/](https://blogs.sas.com/content/subconsciousmusings/2017/04/12/machine-learning-algorithm-use/)
+            -   multi-class classification:
+                -   just use one-vs-all (aka one-vs-rest)
+                -   train a model for each class where the negative labels are all the other classes
+                
+        -   regression:
+            -   linear vs logistic: linear is continuous, logistic is categorical
+            -   finding coefficients for standard linear equation: y = a + bx
+            -   for logistic, we use logistic function (s-shaped curve) to convert output into 0 - 1 value, then we can apply a rule to get a binary label
+                -   like >0.5 then yes else no
+        -   decision trees:
+            -   start with most important feature, split based on that, then continue splitting train set on successive features (where each split has the same value for that feature) until get to leaf nodes (which are the output, e.g., the yes/no decision)
+            -   just like any binary tree
+            -   [https://medium.com/@chiragsehra42/decision-trees-explained-easily-28f23241248](https://medium.com/@chiragsehra42/decision-trees-explained-easily-28f23241248)
+            -   prone to overfitting (high variance), so some ways to account for that are:
+                -   bagging:
+                    -   similar to bootstrapping, construct multiple tree models for different samples of input, then for each new data point, average all the predictions
+                -   random forests:
+                    -   instead of selecting optimal split (i.e., instead of selecting splits that best result in even "sides"), introduce randomness
+                -   boosting (think gradient boosted decision trees / GBDT):
+                    -   combine weak learners
+                    -   each successive learner attempts to correct for the errors of the previous one
+                    -   place more weight on data points where the prev learner went wrong
+        -   collaborative filtering:
+            -   based on assumption that people like things similar to other things they like, and things that are liked by other people with similar taste
+            -   types of filtering:
+                -   A user-item filtering takes a particular user, finds users who are similar to that user based on similarity of ratings, and recommend items that those similar users liked. In contrast, item-item filtering will take an item, find users who liked that item, and find other items that those users or similar users also liked. It takes items and outputs other items as recommendations.  
+                    [https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
+                    -   User-Item Collaborative Filtering: “Users who are similar to you also liked …”
+                    -   Item-Item Collaborative Filtering: “Users who liked this item also liked …”
+        -   SVM or support vector machines:
+            -   basically trying to find the hyperplane (non-linear line) that best separates the input into separate classes. do this by maximizing the margin, i.e., the distance from the hyperplace to the closest data points (the support vectors)
+        -   k-means classification:
+            -   not to be confused w k nearest neighbors, which is quite different [https://www.wikiwand.com/en/K-nearest_neighbors_algorithm](https://www.wikiwand.com/en/K-nearest_neighbors_algorithm)
+            -   algorithm:
+                -   iterative, start with k randomly assigned centroid points, then iterate by:
+                    -   for each point, assign to the closest centroid
+                    -   for each centroid, update/move to the middle (mean) of the points assigned to it
+                -   stop iterating when no more point assignments or centroid movements need to be made
+    -   Feature engineering:
+        -   cross-validation
+        -   1-hot encoding
+    -   Performance metrics / evaluation:
+        -   confusion matrix:
+            -   actual vs predicted [https://rasbt.github.io/mlxtend/user_guide/evaluate/confusion_matrix_files/confusion_matrix_1.png](https://rasbt.github.io/mlxtend/user_guide/evaluate/confusion_matrix_files/confusion_matrix_1.png)
+            -   Predicted
+            -   P N
+            -   P: TP FN
+            -   N: FP TN
+        -   recall or sensitivity = TP / (TP + FN)  
+            or true positives
+            -   of all actual positive labels, how many did we successfully predict?
+        -   precision / true positive rate = TP / (TP + FP)
+            -   of all predicted positive labels, how many were actually positive?
+        -   false positive rate = FP / (FP + TN)
+        -   specificity or true negatives = TN / (TN + FP)
+        -   F1 is the harmonic mean of precision and recall
+            -   2TP / (2TP + FP + FN)
+        -   ROC curve is true positives (recall or sensitivity) vs false positives rate
+            -   we want the curve to be at the top left—this would indicate 0 FPs
+            -   sensitivity as a function of fallout (another name for FPR)
+        -   AUC (area under [ROC] curve):
+            -   [https://medium.com/greyatom/lets-learn-about-auc-roc-curve-4a94b4d88152](https://medium.com/greyatom/lets-learn-about-auc-roc-curve-4a94b4d88152)
+            -   ROC curve is graph of recall/sensitivity vs [1- ]specificity, which is the false positive rate
+                -   in other words, graph of true positives vs false positives
+            -   so area under the curve measures how well the positive probabilities are separated from negative
+            -   intuitively, measures the probability that the classifier will rank a randomly chosen positive example higher than a randomly chosen negative example
+                -   0.5 = random predictor
+            -   better for skewed or imbalanced classes, where it will reward discriminative classifiers over representative (eg punishes a model that only outputs ham for problem where 90% is ham)
+            -   also it's a measure of the entire classifier and not dependent on the specific threshold you choose
+    -   Learning to rank:
+        -   used for ranking a list of items, eg search engine results or FB newsfeed
+        -   differs from traditional ML classification/regression bc prediction is on more than a single instance at a time:  
+            [https://www.quora.com/What-is-the-intuitive-explanation-of-Learning-to-Rank-and-algorithms-like-RankNet-LambdaRank-and-LambdaMART-In-what-types-of-data-variables-can-these-techniques-be-used-What-are-their-strengths-and-limitations/answer/Nikhil-Dandekar](https://www.quora.com/What-is-the-intuitive-explanation-of-Learning-to-Rank-and-algorithms-like-RankNet-LambdaRank-and-LambdaMART-In-what-types-of-data-variables-can-these-techniques-be-used-What-are-their-strengths-and-limitations/answer/Nikhil-Dandekar)
+            -   Traditional ML solves a prediction problem (classification or regression) on a single instance at a time. E.g. if you are doing spam detection on email, you will look at all the features associated with that email and classify it as spam or not. The aim of traditional ML is to come up with a class (spam or no-spam) or a single numerical score for that instance.
+            -   LTR solves a ranking problem on a list of items. The aim of LTR is to come up with optimal ordering of those items. As such, LTR doesn't care much about the exact score that each item gets, but cares more about the relative ordering among all the items.
+        -   3 main approaches: pointwise, pairwise, and listwise
+            -   [https://medium.com/@nikhilbd/pointwise-vs-pairwise-vs-listwise-learning-to-rank-80a8fe8fadfd](https://medium.com/@nikhilbd/pointwise-vs-pairwise-vs-listwise-learning-to-rank-80a8fe8fadfd)
+            -   RankNet, LambdaRank and LambdaMART all transform ranking into a pairwise classification or regression problem. That means you look at pairs of items at a time, come up with the optimal ordering for that pair of items, and then use it to come up with the final ranking for all the results.
+            -   common loss function is minimizing # of inversions: cases where a pair's order should be inverted
+        -   Normalized Discounted Cumulative Gain (NDCG) is a measure of ranking quality:
+            -   [https://www.wikiwand.com/en/Discounted_cumulative_gain](https://www.wikiwand.com/en/Discounted_cumulative_gain)
+            -   emphasizes highly relevant documents appearing earlier in list
+    -   Optimization:
+        -   Gradient descent:
+            -   [https://machinelearningmastery.com/gentle-introduction-mini-batch-gradient-descent-configure-batch-size/](https://machinelearningmastery.com/gentle-introduction-mini-batch-gradient-descent-configure-batch-size/)
+    -   Ranking ML reading materials:
+        -   Literature
+        -   Machine Learning Open Course/Reading Materials
+            -   [http://openclassroom.stanford.edu/MainFolder/CoursePage.php?course=MachineLearning](http://openclassroom.stanford.edu/MainFolder/CoursePage.php?course=MachineLearning)
+            -   [http://web.stanford.edu/class/cs246/handouts.html](http://web.stanford.edu/class/cs246/handouts.html)
+            -   [http://cs229.stanford.edu/materials.html](http://cs229.stanford.edu/materials.html)
+                -   Andrew Ng lectures - [https://www.youtube.com/playlist?list=PLA89DCFA6ADACE599](https://www.youtube.com/playlist?list=PLA89DCFA6ADACE599)
+            -   [http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-867-machine-learning-fall-2006/index.htm](http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-867-machine-learning-fall-2006/index.htm)
+            -   [https://work.caltech.edu/lectures.html#lectures](https://work.caltech.edu/lectures.html#lectures)
+        -   Survey
+            -   Recommender systems survey [http://www.sciencedirect.com/science/article/pii/S0950705113001044](http://www.sciencedirect.com/science/article/pii/S0950705113001044)
+            -   Towards the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions [http://www.stanford.edu/class/ee378b/papers/adomavicius-recsys.pdf](http://www.stanford.edu/class/ee378b/papers/adomavicius-recsys.pdf)
+            -   A survey of collaborative filtering techniques [http://dl.acm.org/citation.cfm?id=1722966](http://dl.acm.org/citation.cfm?id=1722966)
+            -   The YouTube video recommendation system [http://dl.acm.org/citation.cfm?id=1864770](http://dl.acm.org/citation.cfm?id=1864770)
+        -   Sparse Models
+            -   [http://static.googleusercontent.com/media/research.google.com/en/us/pubs/archive/41159.pdf](http://static.googleusercontent.com/media/research.google.com/en/us/pubs/archive/41159.pdf)
+            -   [http://soihub.org/group/26/hawaii-2-linkedin.pptx](http://soihub.org/group/26/hawaii-2-linkedin.pptx)
+            -   [http://www.ideal.ece.utexas.edu/seminar/Deepak_slides.pdf](http://www.ideal.ece.utexas.edu/seminar/Deepak_slides.pdf)
+        -   Learning to Rank
+            -   Learning to rank using gradient descent [http://dl.acm.org/citation.cfm?id=1102363](http://dl.acm.org/citation.cfm?id=1102363)
+            -   Learning to Rank for Information Retrieval [http://research.microsoft.com/en-us/um/beijing/events/lr4ir-2008/proceedings-lr4ir%202008.pdf](http://research.microsoft.com/en-us/um/beijing/events/lr4ir-2008/proceedings-lr4ir%202008.pdf)
+            -   Learning to rank: from pairwise approach to listwise approach [http://dl.acm.org/citation.cfm?id=1273513](http://dl.acm.org/citation.cfm?id=1273513)
+            -   CLiMF: learning to maximize reciprocal rank with collaborative less-is-more filtering
+            -   Learning to rank recommendations with the k-order statistic loss
+            -   Latent Collaborative Retrieval
+        -   Efficient Retrieval
+            -   Fast top-k retrieval for model based recommendation
+            -   Item-based top-n recommendation algorithms
+        -   Exploration/Exploitation:
+            -   A contextual-bandit approach to personalized news article recommendation
+            -   Hierarchical exploration for accelerating contextual bandits
+            -   An Empirical Evaluation of Thompson Sampling
+        -   Document/Language Representation
+            -   Word2Vec
+                -   [https://code.google.com/p/word2vec/](https://code.google.com/p/word2vec/)
+                -   Efficient Estimation of Word Representations in Vector Space
+                -   Distributed Representations of Words and Phrases and their Compositionality
+                -   Linguistic Regularities in Continuous Space Word Representations
+            -   Collaborative topic modeling for recommending scientific articles
+            -   Representing Documents Through Their Readers
+            -   TagSpace (EMNLP 2014)
+            -   Distributed Representations of Sentences and Documents (ICML 2014)
+            -   Large-Scale High-Precision Topic Modeling on Twitter (KDD 2014)
+        -   Collaborative Filtering/Matrix Factorization:
+            -   Matrix factorization techniques for recommender systems
+            -   A matrix factorization technique with trust propagation for recommendation in social networks
+            -   Probabilistic matrix factorization
+            -   Pairwise interaction tensor factorization for personalized tag recommendation
+            -   fLDA: matrix factorization through latent dirichlet allocation
+            -   Factorization Meets the Neighborhood: a Multifaceted Collaborative Filtering Model
+            -   Nonlinear Latent Factorization by Embedding Multiple User Interests (RecSys 2013)
+            -   Scalable Recommendation with Poisson Factorization
+            -   Factorization Machines
+        -   Latent Factor Models
+            -   Regression-based latent factor models
+            -   Latent factor models with additive and hierarchically-smoothed user preferences
+            -   Latent Structured Ranking
+        -   User Modeling
+            -   Learning Relevance from a Heterogeneous Social Network and Its Application in Online Targeting (Rajat Raina's work on our data)
+            -   Understanding the Interaction between Interests, Conversations and Friendships in Facebook
+            -   Turning down the noise in the blogosphere
+            -   Style in the Long Tail: Discovering Unique Interests with Latent Variable Models in Large Scale Social E-commerce (KDD 2014)
+        -   Evaluation:
+            -   Large-scale validation and analysis of interleaved search evaluation
+        -   Deep Learning
+            -   Learning Deep Architectures for AI
+            -   Wide & Deep Learning for Recommender Systems
+            -   Deep Neural Networks for YouTube Recommendations
+        -   General Machine Learning
+            -   Learning Classifiers from Only Positive and Unlabeled Data (KDD 2008, useful for lookalike)
+-   Behavioral:  
+    Situation -> Task -> Action -> Result context -> challenge -> action / solution -> results
+    -   Haseeb:  
+        [http://haseebq.com/how-to-break-into-tech-job-hunting-and-interviews/](http://haseebq.com/how-to-break-into-tech-job-hunting-and-interviews/)
+        -   Almost every question you’ll be asked will be a permutation of one of these four:
+            -   What’s your story / walk me through your resume / why’d you leave your last job? (these are essentially the same question)
+            -   Why us?
+            -   Tell me about a challenging bug you faced and how you solved it.
+            -   Tell me about an interesting project you worked on.
+        -   The first question is particularly important. Essentially, they want to hear your personal narrative. Your answer will strongly influence their perception of you.
+        -   This really just comes down to storytelling. Consider yourself a character in a story, and structure the story with a beginning, middle, and end. There should be inflection points, characterization, and easy to understand motivations. Keep it as short as possible, while preserving color and what makes you interesting. Try not to be negative. Frame your story around seeking challenge and wanting to better yourself, rather than rejecting or disliking things.
+        -   You will tell this narrative again and again. If you interview enough, eventually it will congeal into a script. The best way to improve at it is to literally practice it out loud and listen to a recording of it. Also try to get feedback from someone whose judgment you trust, and ask them to be as ruthlessly critical as possible.
+        -   For the remaining three questions, you should have have pre-crafted answers. If you’re at a loss for stories, it may help to sit down and just brainstorm every relevant story you can remember (for example, every bug you remember working on), and then narrow it down from a larger list.
+        -   It’s hard to practice this effectively in a vacuum, so this is a good thing to work with someone else on.
+    -   Interview Cake:  
+        [https://www.interviewcake.com/coding-interview-tips#chitchat](https://www.interviewcake.com/coding-interview-tips#chitchat)
+        -   Chitchat like a pro.
+        -   Before diving into code, most interviewers like to chitchat about your background. They're looking for:
+            -   Metacognition about coding. Do you think about how to code well?
+            -   Ownership/leadership. Do you see your work through to completion? Do you fix things that aren't quite right, even if you don't have to?
+            -   Communication. Would chatting with you about a technical problem be useful or painful?
+        -   You should have at least one:
+            -   example of an interesting technical problem you solved
+            -   example of an interpersonal conflict you overcame
+            -   example of leadership or ownership
+            -   story about what you should have done differently in a past project
+            -   piece of trivia about your favorite language, and something you do and don't like about said language
+            -   question about the company's product/business
+            -   question about the company's engineering strategy (testing, Scrum, etc)
+        -   Nerd out about stuff. Show you're proud of what you've done, you're amped about what they're doing, and you have opinions about languages and workflows.
+    -   Questions to ask:
+        -   [https://www.reddit.com/r/cscareerquestions/comments/4ce2s3/resource_interview_questions_my_massive/](https://www.reddit.com/r/cscareerquestions/comments/4ce2s3/resource_interview_questions_my_massive/)
+        -   [http://treycausey.com/data_science_interviews.html:](http://treycausey.com/data_science_interviews.html:)
+            -   What does success look like for this position? How will I know if I am accomplishing what is expected of me?
+            -   What is the last project you shipped? What was the goal, how long did it take, what were the stumbling blocks, what tools did you use, etc.
+            -   What will my first 90 days in this role look like? First 180 days?
+            -   Who will I report to and how many people report to that person? Do they have regular 1:1 with their team members?
+            -   Why did the last person who quit this team leave? The company?
+            -   If a startup, how long is your runway? How are financial decisions made?
+            -   What would be my first project here? Has someone already been working on this or is this in the aspirational stage?
+            -   What is the current state of the data infrastructure? How much work needs to be done on getting the infrastructure and pipeline into shape before we start analyzing that data?
+        -   What's the biggest technical challenge or problem on this team currently?
+        -   What makes this team unique compared to other teams?
+        -   What do engineers on this team do day to day? How are projects to work on decided? How closely do people work with other teams or functions (PM, DS, etc.)?
+        -   What does the ramp-up process look like? Is there a formal mentoring program?
+-   Time and Space Complexity:
+    -   [http://bigocheatsheet.com/](http://bigocheatsheet.com/)
+    -   O(1) < O(log n) < O(n) < O(n log n) < O(n^2) < O(n^3) < O(2^n) < O(n!)  
+        lg n usually means base 2 but doesn't matter because same sans constants / in simplified form.
+    -   Time complexity of recursive algorithms that make multiple calls per call is often exponential, think of the fib algorithm: f(n) = f(n-1) + f(n-2).
+        -   This isn't just O(2n) since 2 calls are being made for _each_ call, not 2 calls for the whole thing. So it's O(2^n) instead.
+    -   On a similar note, even if a function doesn't take any extra space with local variables, if it makes a recursive call, that state has to be added to the call stack. (The caller function "pauses" and the callee is pushed to the call stack. When the callee is done executing, it's popped and control is returned to the caller.)
+        -   If the recursion is tail recursive (last call of function is the recursive call), however, then can be tail call optimized so that the last call acts as a GOTO and there's no space overhead—i.e., don't need to push frame to call stack.
+    -   Space used for a recursive function is _proportional to the maximum depth of its recursion tree_, in other words, the length of the longest path in the tree.  
+        [https://www.dropbox.com/s/x7emb4iy4f8vsz6/Screenshot%202017-03-11%2010.30.52.png?dl=0](https://www.dropbox.com/s/x7emb4iy4f8vsz6/Screenshot%202017-03-11%2010.30.52.png?dl=0)
+        -   It's not the number of function calls since the call stack is popping function stack frames as it finishes executing each.
